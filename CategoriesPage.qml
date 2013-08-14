@@ -77,14 +77,13 @@ Page {
                 text: i18n.tr("Close")
                 onClicked: {
                     if (editCategoryName.text == "") {
-                        editCategoryName.placeholderText = i18n.tr("Give a name")
+                        PopupUtils.close(editCategoriesDialog)
                         return
                     }
 
                     if (categoriesModel.count != 0)
                         categoriesModel.remove(pos)
-                    categoriesModel.insert(pos, {categoryName: editCategoryName.text})
-                    PopupUtils.close(editCategoriesDialog)
+                    categoriesModel.insert(pos, {categoryName: editCategoryName.text})  
                 }
             }
 

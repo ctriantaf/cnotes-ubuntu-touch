@@ -61,19 +61,8 @@ Page {
             width: parent.width
 
             Button {
-                text: i18n.tr("Close")
-                width: parent.width / 3
-                onClicked: PopupUtils.close(dialog)
-            }
-
-            ListItem.Empty {
-                width: parent.width / 3 - units.gu(2)
-                showDivider: false
-            }
-
-            Button {
                 text: i18n.tr("Create")
-                width: parent.width / 3
+                width: parent.width
                 onClicked: {
                     if (inputTitle.text == "") {
                         inputTitle.placeholderText = i18n.tr("Give a title")
@@ -83,7 +72,11 @@ Page {
                     Storage.setNote(idCount, inputTitle.text, inputBody.text, category)
                     notes.append({title: inputTitle.text, body: inputBody.text, id: idCount, category: category})
                     idCount++
-//                    PopupUtils.close(dialog)
+
+                    inputTitle.text = ""
+                    inputBody.text = ""
+                    mainView.category = i18n.tr("None")
+                    mainView.tag = i18n.tr("None")
                     pageStack.push(mainPage)
                 }
             }

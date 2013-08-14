@@ -61,26 +61,13 @@ Page {
             width: parent.width
 
             Button {
-                text: i18n.tr("Close")
-                width: parent.width / 3
-                onClicked: PopupUtils.close(dialog)
-            }
-
-            ListItem.Empty {
-                width: parent.width / 3 - units.gu(2)
-                showDivider: false
-            }
-
-            Button {
                 text: i18n.tr("Done")
-                width: parent.width / 3
+                width: parent.width
                 onClicked: {
-                    Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, "red")
+                    Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, category)
                     notes.get(mainView.position).title = inputTitleEdit.text
                     notes.get(mainView.position).body = inputBodyEdit.text
-//                            notes.get(editNotePage.position).category = editNotePage.color
-
-//                    PopupUtils.close(editNoteDialog)
+                    notes.get(editNotePage.position).category = category
                     pageStack.push(mainPage)
                 }
             }

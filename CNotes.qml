@@ -26,6 +26,9 @@ MainView {
     
     width: units.gu(50)
     height: units.gu(75)
+    headerColor: "#57365E"
+    backgroundColor: "#A55263"
+    footerColor: "#D75669"
 
     property string idCount : "0"
     property string id
