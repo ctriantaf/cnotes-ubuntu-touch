@@ -75,6 +75,11 @@ Page {
                 text: i18n.tr("Create")
                 width: parent.width / 3
                 onClicked: {
+                    if (inputTitle.text == "") {
+                        inputTitle.placeholderText = i18n.tr("Give a title")
+                        return
+                    }
+
                     Storage.setNote(idCount, inputTitle.text, inputBody.text, category)
                     notes.append({title: inputTitle.text, body: inputBody.text, id: idCount, category: category})
                     idCount++

@@ -33,7 +33,6 @@ MainView {
     property string body
     property string category : "None"
     property string tag : "None"
-//    property variant tags
     property string position
 
     ListModel {
@@ -148,8 +147,8 @@ MainView {
 
                             onClicked: {
                                 notes.remove(notesView.position)
-                                Storage.removeNote(notes.get(notesView.position).id);
-                                PopupUtils.close(notePopoverComponent)
+                                Storage.removeNote(mainView.id);
+                                PopupUtils.close(notePopover)
                             }
                         }
                     }
@@ -158,7 +157,7 @@ MainView {
 
             function loadNotes() {
                 for (var i; i < parseInt(idCount); i++) {
-                    notes.append({title:Storage.getTitle(i), body:Storage.getBody(i)})
+                    notes.append({title:Storage.getTitle(i), body:Storage.getBody(i), id:i, category:Storage.getCategory(i)})
                 }
             }
         }
@@ -244,6 +243,9 @@ MainView {
                                 text: i18n.tr("Add tags")
 
                                 onClicked: {
+                                    if (tagTextField.text == "")
+                                        tagTextField.text = i18n.tr("None")
+
                                     tag = tagTextField.text
                                     for (var i = 0; i < tagTextField.text.split(",").length; i++) {
                                         // Check if tag already exists!

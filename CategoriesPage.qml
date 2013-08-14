@@ -7,6 +7,7 @@ Page {
     id: categoriesPage
     property string name
     property int pos
+    property string mode
 
     Header {
         id: header
@@ -24,6 +25,7 @@ Page {
 
                 onTriggered: {
                     categoriesPage.name = ""
+                    categoriesPage.mode = "add"
                     PopupUtils.open(editCategoriesComponent)
                 }
             }
@@ -47,7 +49,8 @@ Page {
 
             onClicked: {
                 categoriesPage.name = categoryName
-                pos = categoriesView.currentIndex
+                categoriesPage.pos = categoriesView.currentIndex
+                categoriesPage.mode = "edit"
                 PopupUtils.open(editCategoriesComponent)
             }
         }
@@ -59,7 +62,11 @@ Page {
 
         Dialog {
             id: editCategoriesDialog
-            title: i18n.tr("Edit ") + name
+            title: {
+                if (categoriesPage.mode == "edit")
+                    return i18n.tr("Edit ") + name
+                return i18n.tr("Add category")
+            }
 
             TextField {
                 id: editCategoryName
@@ -69,6 +76,11 @@ Page {
             Button {
                 text: i18n.tr("Close")
                 onClicked: {
+                    if (editCategoryName.text == "") {
+                        editCategoryName.placeholderText = i18n.tr("Give a name")
+                        return
+                    }
+
                     if (categoriesModel.count != 0)
                         categoriesModel.remove(pos)
                     categoriesModel.insert(pos, {categoryName: editCategoryName.text})
