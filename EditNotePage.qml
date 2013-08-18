@@ -32,7 +32,7 @@ Page {
             placeholderText: i18n.tr("Title")
         }
 
-        TextField {
+        TextArea {
             id: inputBodyEdit
             text: mainView.body
             height: units.gu(10)
@@ -56,20 +56,18 @@ Page {
             onClicked: PopupUtils.open(categoryComponent, editCategoryButton.itemHint)
         }
 
-        Row {
-            spacing: units.gu(1)
+        Button {
+            text: i18n.tr("Done")
             width: parent.width
+            onClicked: {
+                Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, category, tag, 'false', 'main')
+                notes.get(mainView.position).title = inputTitleEdit.text
+                notes.get(mainView.position).body = inputBodyEdit.text
+                notes.get(mainView.position).category = category
+                notes.get(mainView.position).tag = tag
 
-            Button {
-                text: i18n.tr("Done")
-                width: parent.width
-                onClicked: {
-                    Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, category)
-                    notes.get(mainView.position).title = inputTitleEdit.text
-                    notes.get(mainView.position).body = inputBodyEdit.text
-                    notes.get(editNotePage.position).category = category
-                    pageStack.push(mainPage)
-                }
+                mainView.tag = tag
+                pageStack.push(mainPage)
             }
         }
     }

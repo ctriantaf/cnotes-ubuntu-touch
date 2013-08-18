@@ -1,66 +1,63 @@
 import QtQuick 2.0
-import QtQuick 2.0
+import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1
 import Ubuntu.Components.Popups 0.1
+import "Storage.js" as Storage
 
-Empty {
+Subtitled {
 
     id: root
+    removable: true
+    backgroundIndicator: Label {
+        anchors {
+            verticalCenter: parent.verticalCenter
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        text: {
+            if (_view === "main")
+                return i18n.tr("Note will be moved to archive")
+            return i18n.tr("Note will be moved back")
+        }
+    }
 
     property string _id
     property string _title
     property string _body
+    property string _tag
     property string _category
+    property string _archive
+    property string _view
 
-    Subtitled {
-        text: _title
-        subText: _body
-        anchors {
-            top: parent.top
-            left: parent.left
+    text: _title
+    subText: _body
+
+    onItemRemoved: {
+        if (_view === "main") {
+            _archive = 'true'
+            _view = "archive"
+            Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view)
+            archivesModel.append({id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view})
         }
-
-        MouseArea {
-            anchors.fill: parent
-
-            onClicked: {
-                mainView.id = _id
-                mainView.title = _title
-                mainView.body = _body
-                mainView.category = _category
-                mainView.position = model.index
-
-                // Show note page
-            }
-
-            onPressAndHold: {
-                mainView.id = _id
-                mainView.title = _title
-                mainView.body = _body
-                mainView.category = _category
-                mainView.position = model.index
-                PopupUtils.open(notePopoverComponent, null)
-            }
+        else {
+            _archive = 'false'
+            _view = "main"
+            Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view)
+            archivesModel.remove(archivesPage.pos)
+            notes.insert(_id, {id:parseInt(_id), title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view})
         }
     }
 
-    CheckBox {
-        id: doneCheckBox
 
-        anchors {
-            verticalCenter: parent.verticalCenter
-            right: parent.right
-            rightMargin: units.gu(2)
-        }
+    onClicked: {
+        mainView.id = _id
+        mainView.title = _title
+        mainView.body = _body
+        mainView.category = _category
+        mainView.tag = _tag
+        mainView.position = model.index
 
-        onCheckedChanged: {
-            if (checked) {
-                root.opacity = 0.3
-            }
-            else {
-                root.opacity = 1.0
-            }
-        }
+        pageStack.push (noteViewPage)
     }
 }

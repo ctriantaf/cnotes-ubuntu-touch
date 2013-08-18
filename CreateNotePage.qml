@@ -31,7 +31,7 @@ Page {
             placeholderText: i18n.tr("Title")
         }
 
-        TextField {
+        TextArea {
             id: inputBody
             width: parent.width
             placeholderText: i18n.tr("Body")
@@ -40,7 +40,7 @@ Page {
 
         Button {
             id: tagsButton
-            text: i18n.tr("Tags: ") + tag
+            text: i18n.tr("Tags: ") + mainView.tag
             width: parent.width
 
             onClicked: {
@@ -50,7 +50,7 @@ Page {
 
         Button {
             id: categoryButton
-            text: i18n.tr("Category: ") + category
+            text: i18n.tr("Category: ") + mainView.category
             width: parent.width
 
             onClicked: PopupUtils.open(categoryComponent, categoryButton.itemHint)
@@ -69,12 +69,16 @@ Page {
                         return
                     }
 
-                    Storage.setNote(idCount, inputTitle.text, inputBody.text, category)
-                    notes.append({title: inputTitle.text, body: inputBody.text, id: idCount, category: category})
+                    Storage.setNote(idCount, inputTitle.text, inputBody.text, category, tag, 'false', 'main')
+                    notes.append({title: inputTitle.text, body: inputBody.text, id: idCount,
+                                     category: category, tag:tag, archive: 'false', view:"main"})
                     idCount++
 
                     inputTitle.text = ""
                     inputBody.text = ""
+
+                    mainView.title = ""
+                    mainView.body = ""
                     mainView.category = i18n.tr("None")
                     mainView.tag = i18n.tr("None")
                     pageStack.push(mainPage)

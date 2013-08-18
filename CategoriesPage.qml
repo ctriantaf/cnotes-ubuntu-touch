@@ -80,10 +80,17 @@ Page {
                         PopupUtils.close(editCategoriesDialog)
                         return
                     }
+                    if (categoriesModel.count != 0) {
+                        if (categoriesPage.mode == "add") {
+                            categoriesModel.append({categoryName: editCategoryName.text})
+                        }
+                        else {
+                            categoriesModel.remove(pos)
+                            categoriesModel.insert(pos, {categoryName: editCategoryName.text})
+                        }
+                    }
 
-                    if (categoriesModel.count != 0)
-                        categoriesModel.remove(pos)
-                    categoriesModel.insert(pos, {categoryName: editCategoryName.text})  
+                    PopupUtils.close(editCategoriesDialog)
                 }
             }
 

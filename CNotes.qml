@@ -37,13 +37,61 @@ MainView {
     property string category : "None"
     property string tag : "None"
     property string position
+    property string filter
+
+    property variant archivesModel
+    property variant filterNotesModel
+    property variant archiveNotes
+    property variant allNotes
 
     ListModel {
         id: categoriesModel
     }
 
+    archivesModel: ListModel {
+
+    }
+
+    filterNotesModel: ListModel {
+
+    }
+
     ListModel {
+        id: noteTagsModel
+    }
+
+    ListModel {
+        // Here are stored all the tags
         id: tags
+    }
+
+
+    ListModel {
+        // Here are stored the three last used tags (for the gridView)
+        id: tagsModel
+    }
+
+    function loadNotes() {
+        allNotes = Storage.fetchNotes('false')
+        idCount = 0
+        for (var i = 0; i < allNotes.length; i++) {
+            var noteId = allNotes[i]
+            notes.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
+                                     category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'false', view:"main"})
+
+            if (noteId > idCount)
+                idCount = noteId
+        }
+
+    }
+
+    function loadArchiveNotes() {
+        archiveNotes = Storage.fetchNotes('true')
+        for (var i = 0; i < archiveNotes.length; i++) {
+            var noteId = archiveNotes[i]
+            archivesModel.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
+                                     category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'true', view:"archive"})
+        }
     }
 
     function containTag(t) {
@@ -61,8 +109,10 @@ MainView {
 
         Page {
             Component.onCompleted: {
+                Storage.deleteDatabase()
                 Storage.initialize()
                 loadNotes()
+                loadArchiveNotes()
             }
 
             id: mainPage
@@ -78,8 +128,22 @@ MainView {
                         iconSource: Qt.resolvedUrl("images/add.svg")
                         text: i18n.tr("Add")
 
-//                        onTriggered: PopupUtils.open(newNoteDialogComponent)
                         onTriggered: pageStack.push(createNotePage)
+                    }
+                }
+
+                ToolbarButton {
+                    action: Action {
+                        id: archivesPageAction
+                        objectName: "archivesPageAction"
+
+                        iconSource: Qt.resolvedUrl("images/select.svg")
+                        text: i18n.tr("Archive")
+
+                        onTriggered: {
+//                            loadArchiveNotes();
+                            pageStack.push(archivesPage)
+                        }
                     }
                 }
 
@@ -116,51 +180,15 @@ MainView {
                 delegate: NoteItem {
                     _id: id
                     _title: title
-                    _body: body
-                    _category: category
-                }
-
-            }
-
-
-            Component {
-                id: notePopoverComponent
-
-                Popover {
-                    id: notePopover
-
-                    Column {
-                        anchors {
-                            top: parent.top
-                            left: parent.left
-                            right: parent.right
-                        }
-
-                        ListItem.Standard {
-                            text: i18n.tr("Edit")
-
-                            onClicked:  {
-                                PopupUtils.close(notePopover)
-                                pageStack.push(editNotePage)
-                            }
-                        }
-
-                        ListItem.Standard {
-                            text: i18n.tr("Remove")
-
-                            onClicked: {
-                                notes.remove(notesView.position)
-                                Storage.removeNote(mainView.id);
-                                PopupUtils.close(notePopover)
-                            }
-                        }
+                    _body: {
+                        if (body.length > 80)
+                            return body.substring(0, 80) + "..."
+                        return body
                     }
-                }
-            }
 
-            function loadNotes() {
-                for (var i; i < parseInt(idCount); i++) {
-                    notes.append({title:Storage.getTitle(i), body:Storage.getBody(i), id:i, category:Storage.getCategory(i)})
+                    _tag: tag
+                    _category: category
+                    _view: view
                 }
             }
         }
@@ -183,15 +211,29 @@ MainView {
             visible: false
         }
 
+        ArchivesPage {
+            id: archivesPage
+            height: parent.height
+            visible: false
+        }
+
+        NoteView {
+            id: noteViewPage
+            height: parent.height
+            visible: false
+        }
+
+        FilterNoteView {
+            id: filterNoteView
+            height: parent.height
+            visible: false
+        }
+
         Component {
             id: tagsComponent
 
             Popover {
                 id: tagsPopover
-
-                ListModel {
-                    id: tagsModel
-                }
 
                 Column {
                     anchors {
@@ -201,17 +243,33 @@ MainView {
                     }
 
                     ListItem.Empty {
+                        id: tagListItem
+                        visible: {
+                            print (tagsModel.count)
+                            if (tagsModel.count == 0) {
+                                return false
+                            }
+                            return true
+                        }
 
                         GridView {
                             id: grid
                             width: parent.width
                             height: parent.height
 
-                            model: tags
+                            model: tagsModel
                             delegate: Button {
+                                id: tagButton
                                 text: tag
                                 onClicked: {
-                                    mainView.tag = mainView.tag + "," + text
+                                    if (tagTextField.text.length != 0) {
+                                        tagTextField.text = tagTextField.text.toString() + "," + tag
+                                    }
+                                    else {
+                                        tagTextField.text = tag
+                                    }
+
+                                    tagListItem.visible = true
                                 }
                             }
                         }
@@ -249,13 +307,17 @@ MainView {
                                     if (tagTextField.text == "")
                                         tagTextField.text = i18n.tr("None")
 
-                                    tag = tagTextField.text
+                                    mainView.tag = tagTextField.text
                                     for (var i = 0; i < tagTextField.text.split(",").length; i++) {
                                         // Check if tag already exists!
-                                        if (!containTag(tagTextField.text.split(",")[i]))
-                                            if (tags.count == 6)
-                                                tags.remove(0)
+                                        if (!containTag(tagTextField.text.split(",")[i])) {
+                                            if (tagsModel.count == 3) {
+                                                tagsModel.remove(0)
+                                                print ("removed")
+                                            }
+                                            tagsModel.append({tag: tagTextField.text.split(",")[i]})
                                             tags.append({tag: tagTextField.text.split(",")[i]})
+                                        }
                                     }
 
                                     PopupUtils.close(tagsPopover)
@@ -269,6 +331,7 @@ MainView {
 
         Component {
             id: categoryComponent
+            // FIXME make popover filled with a ListModel categories
 
             Popover {
                 id: categoryPopover
@@ -281,33 +344,95 @@ MainView {
                         right: parent.right
                     }
 
-                    ListItem.Standard {
-                        text: i18n.tr("None")
+                    ListItem.Empty {
+                        Label {
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                left: parent.left
+                                margins: units.gu(2)
+                            }
+
+                            text: i18n.tr("None")
+                            fontSize: "medium"
+                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+                        }
+
                         onClicked: {
                             category = "None"
                             PopupUtils.close(categoryPopover)
                         }
                     }
 
-                    ListItem.Standard {
-                        text: i18n.tr("Things to do")
+                    ListItem.Empty {
+                        Label {
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                left: parent.left
+                                margins: units.gu(2)
+                            }
+
+                            text: i18n.tr("Thing to do")
+                            fontSize: "medium"
+                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+                        }
+
                         onClicked: {
                             category = "Things to do"
                             PopupUtils.close(categoryPopover)
                         }
                     }
 
-                    ListItem.Standard {
-                        text: i18n.tr("Work")
+                    ListItem.Empty {
+                        Label {
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                left: parent.left
+                                margins: units.gu(2)
+                            }
+
+                            text: i18n.tr("Work")
+                            fontSize: "medium"
+                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+                        }
+
                         onClicked: {
                             category = "Work"
                             PopupUtils.close(categoryPopover)
                         }
                     }
 
-                    ListItem.Standard {
+//                    ListItem.Empty {
+//                        ListView {
+//                            width: parent.width
+//                            model: categoriesModel
+//                            delegate: Label {
+//                                anchors {
+//                                    verticalCenter: parent.verticalCenter
+//                                    left: parent.left
+//                                    margins: units.gu(2)
+//                                }
+
+//                                text: i18n.tr(categoryName)
+//                                fontSize: "medium"
+//                                color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+//                            }
+//                        }
+//                    }
+
+                    ListItem.Empty {
                         id: newCategoryLabel
-                        text: i18n.tr("New category")
+                        Label {
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                left: parent.left
+                                margins: units.gu(2)
+                            }
+
+                            text: i18n.tr("Create category")
+                            fontSize: "medium"
+                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+                        }
+
                         onClicked: {
                             newCategoryItem.visible = true
                             newCategoryLabel.visible = false
@@ -339,10 +464,12 @@ MainView {
                             Button {
                                 anchors {
                                     verticalCenter: parent.verticalCenter
-                                    topMargin: units.gu(1)
                                 }
                                 height: newCategoryField.height
                                 text: i18n.tr("Create")
+                                onClicked: {
+                                    categoriesModel.append({categoryName: newCategoryField.text})
+                                }
                             }
                         }
                     }
