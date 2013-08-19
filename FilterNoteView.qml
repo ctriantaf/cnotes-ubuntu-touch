@@ -11,8 +11,8 @@ Page {
         id: header
         title: {
             if (mainView.filter == "tag")
-                return i18n.tr("Notes with ") + mainView.filter + ": " + mainView.tag
-            return i18n.tr("Notes with ") + mainView.filter + ": " + mainView.category
+                return mainView.filter + ": " + mainView.tag
+            return mainView.filter + ": " + mainView.category
         }
     }
 

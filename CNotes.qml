@@ -38,6 +38,7 @@ MainView {
     property string tag : "None"
     property string position
     property string filter
+    property string archive
 
     property variant archivesModel
     property variant filterNotesModel
@@ -109,7 +110,7 @@ MainView {
 
         Page {
             Component.onCompleted: {
-                Storage.deleteDatabase()
+//                Storage.deleteDatabase()
                 Storage.initialize()
                 loadNotes()
                 loadArchiveNotes()

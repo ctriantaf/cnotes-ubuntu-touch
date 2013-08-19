@@ -57,6 +57,7 @@ Subtitled {
         mainView.category = _category
         mainView.tag = _tag
         mainView.position = model.index
+        mainView.archive = _archive
 
         pageStack.push (noteViewPage)
     }

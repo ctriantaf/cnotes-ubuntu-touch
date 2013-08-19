@@ -65,17 +65,31 @@ Page {
                 onFocusChanged: focus = false
             }
 
-            ListItem.Standard {
-                id: noteCategoryLabel
+            Row {
+                spacing: units.gu(1)
                 width: parent.width
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-                text: i18n.tr("Category: ") + mainView.category
 
-                onClicked: {
-                    mainView.filter = "category"
-                    showNotesWithFilter(mainView.category)
+                ListItem.Standard {
+                    id: noteCategoryLabel
+                    showDivider: false
+                    width: parent.width / 2
+                    text: i18n.tr("Category: ") + mainView.category
+
+                    onClicked: {
+                        mainView.filter = "Category"
+                        showNotesWithFilter(mainView.category)
+                    }
+                }
+
+                ListItem.Standard {
+                    width: parent.width / 2
+                    showDivider: false
+                    text: {
+                        if (mainView.archive == "true") {
+                            return i18n.tr("Archive: Yes")
+                        }
+                            return i18n.tr("Archive: No")
+                    }
                 }
 
             }
@@ -93,7 +107,7 @@ Page {
                 }
 
                 onClicked: {
-                    mainView.filter = "tag"
+                    mainView.filter = "Tag"
                     showNotesWithFilter (tag)
                 }
             }
@@ -101,7 +115,7 @@ Page {
     }
 
     function showNotesWithFilter (f) {
-        if (mainView.filter == "tag") {
+        if (mainView.filter == "Tag") {
             noteViewPage.allNotes = Storage.fetchAllNotesWithTag(f)
         }
         else {
