@@ -7,20 +7,12 @@ import "Storage.js" as Storage
 
 Page {
     id: editNotePage
-
-    Header {
-        id: header
-        title: i18n.tr("Edit note")
-    }
+    title: i18n.tr("Edit note")
 
     Column {
-        height: parent.height - header.height
-        width: parent.width
         spacing: units.gu(2)
         anchors {
-            top: header.bottom
-            left: parent.left
-            right: parent.right
+            fill: parent
             verticalCenter: parent.verticalCenter
             margins: units.gu(2)
         }
@@ -61,13 +53,13 @@ Page {
             width: parent.width
             onClicked: {
                 Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, category, tag, 'false', 'main')
-                notes.get(mainView.position).title = inputTitleEdit.text
-                notes.get(mainView.position).body = inputBodyEdit.text
-                notes.get(mainView.position).category = category
-                notes.get(mainView.position).tag = tag
+                mainView.notes.get(mainView.position).title = inputTitleEdit.text
+                mainView.notes.get(mainView.position).body = inputBodyEdit.text
+                mainView.notes.get(mainView.position).category = category
+                mainView.notes.get(mainView.position).tag = tag
 
                 mainView.tag = tag
-                pageStack.push(mainPage)
+                pageStack.push(Qt.resolvedUrl("MainPage.qml"))
             }
         }
     }

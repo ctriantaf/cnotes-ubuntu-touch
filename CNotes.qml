@@ -40,26 +40,21 @@ MainView {
     property string filter
     property string archive
 
+    property variant notes
     property variant archivesModel
     property variant filterNotesModel
     property variant archiveNotes
     property variant allNotes
 
-    ListModel {
-        id: categoriesModel
-    }
+    notes: ListModel {}
 
-    archivesModel: ListModel {
+    ListModel { id: categoriesModel }
 
-    }
+    archivesModel: ListModel {}
 
-    filterNotesModel: ListModel {
+    filterNotesModel: ListModel {}
 
-    }
-
-    ListModel {
-        id: noteTagsModel
-    }
+    ListModel { id: noteTagsModel }
 
     ListModel {
         // Here are stored all the tags
@@ -77,7 +72,7 @@ MainView {
         idCount = 0
         for (var i = 0; i < allNotes.length; i++) {
             var noteId = allNotes[i]
-            notes.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
+            mainView.notes.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
                                      category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'false', view:"main"})
 
             if (noteId > idCount)
@@ -106,129 +101,7 @@ MainView {
 
     PageStack {
         id: pageStack
-        Component.onCompleted: pageStack.push(mainPage)
-
-        Page {
-            Component.onCompleted: {
-//                Storage.deleteDatabase()
-                Storage.initialize()
-                loadNotes()
-                loadArchiveNotes()
-            }
-
-            id: mainPage
-            title: i18n.tr("CNotes")
-            visible: false
-
-            tools: ToolbarItems {
-                ToolbarButton {
-                    action: Action {
-                        id: addNoteAction
-                        objectName: "addNoteAction"
-
-                        iconSource: Qt.resolvedUrl("images/add.svg")
-                        text: i18n.tr("Add")
-
-                        onTriggered: pageStack.push(createNotePage)
-                    }
-                }
-
-                ToolbarButton {
-                    action: Action {
-                        id: archivesPageAction
-                        objectName: "archivesPageAction"
-
-                        iconSource: Qt.resolvedUrl("images/select.svg")
-                        text: i18n.tr("Archive")
-
-                        onTriggered: {
-//                            loadArchiveNotes();
-                            pageStack.push(archivesPage)
-                        }
-                    }
-                }
-
-                ToolbarButton {
-                    action: Action {
-                        id: categoriesPageAction
-                        objectName: "categoriesPageAction"
-
-                        iconSource: Qt.resolvedUrl("images/edit.svg")
-                        text: i18n.tr("Categories")
-
-                        onTriggered: {
-                            categoriesModel.append({categoryName: "Things to do"})
-                            categoriesModel.append({categoryName: "Work"})
-                            pageStack.push(categoriesPage)
-                        }
-                    }
-                }
-            }
-
-            ListModel {
-                id: notes
-            }
-
-            ListView {
-                id: notesView
-                width: parent.width
-                height: parent.height
-                leftMargin: 5
-                rightMargin: 5
-                spacing: 2
-                model: notes
-
-                delegate: NoteItem {
-                    _id: id
-                    _title: title
-                    _body: {
-                        if (body.length > 80)
-                            return body.substring(0, 80) + "..."
-                        return body
-                    }
-
-                    _tag: tag
-                    _category: category
-                    _view: view
-                }
-            }
-        }
-
-        CreateNotePage {
-            id: createNotePage
-            height: parent.height
-            visible: false
-        }
-
-        EditNotePage {
-            id: editNotePage
-            height: parent.height
-            visible: false
-        }
-
-        CategoriesPage {
-            id: categoriesPage
-            height: parent.height
-            visible: false
-        }
-
-        ArchivesPage {
-            id: archivesPage
-            height: parent.height
-            visible: false
-        }
-
-        NoteView {
-            id: noteViewPage
-            height: parent.height
-            visible: false
-        }
-
-        FilterNoteView {
-            id: filterNoteView
-            height: parent.height
-            visible: false
-        }
+        Component.onCompleted: pageStack.push(Qt.resolvedUrl("MainPage.qml"))
 
         Component {
             id: tagsComponent
@@ -255,8 +128,11 @@ MainView {
 
                         GridView {
                             id: grid
-                            width: parent.width
-                            height: parent.height
+
+                            anchors {
+                                fill: parent
+                                margins: units.gu(1)
+                            }
 
                             model: tagsModel
                             delegate: Button {

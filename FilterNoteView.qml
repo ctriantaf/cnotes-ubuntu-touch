@@ -4,26 +4,16 @@ import Ubuntu.Components.ListItems 0.1 as ListIten
 
 Page {
     id: filterNoteViewPage
-    height: parent.height
-    width: parent.width
-
-    Header {
-        id: header
-        title: {
-            if (mainView.filter == "tag")
-                return mainView.filter + ": " + mainView.tag
-            return mainView.filter + ": " + mainView.category
-        }
+    title: {
+        if (mainView.filter == "tag")
+            return mainView.filter + ": " + mainView.tag
+        return mainView.filter + ": " + mainView.category
     }
 
     ListView {
         id: filterNoteView
-        height: parent.height - header.height
-        width: parent.width
         anchors {
-            top: header.bottom
-            left: parent.left
-            right: parent.right
+            fill: parent
             margins: units.gu(2)
         }
 

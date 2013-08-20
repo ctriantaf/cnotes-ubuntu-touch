@@ -59,6 +59,6 @@ Subtitled {
         mainView.position = model.index
         mainView.archive = _archive
 
-        pageStack.push (noteViewPage)
+        pageStack.push (Qt.resolvedUrl("NoteView.qml"))
     }
 }

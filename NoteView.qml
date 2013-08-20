@@ -6,13 +6,9 @@ import "Storage.js" as Storage
 
 Page {
     id: noteViewPage
+    title: mainView.title
 
     property variant allNotes
-
-    Header {
-        id: header
-        title: mainView.title
-    }
 
     onVisibleChanged: {
         if (visible == true) {
@@ -33,7 +29,23 @@ Page {
                 text: i18n.tr("Edit")
 
                 onTriggered: {
-                    pageStack.push(editNotePage)
+                    pageStack.push(Qt.resolvedUrl("EditNotePage.qml"))
+                }
+            }
+        }
+
+        back: ToolbarButton {
+            action: Action {
+                id: back
+                objectName: "back"
+
+                iconSource: Qt.resolvedUrl("images/back.svg")
+                text: i18n.tr("Back")
+
+                onTriggered: {
+                    mainView.tag = i18n.tr("None")
+                    mainView.category = i18n.tr("None")
+                    pageStack.pop()
                 }
             }
         }
@@ -41,11 +53,9 @@ Page {
 
     Row {
         anchors {
-            top: header.bottom
-            left: parent.left
-            right: parent.right
+            fill: parent
+            margins: units.gu(2)
         }
-        height: parent.height
         spacing: units.gu(2)
 
         Column {
@@ -65,33 +75,25 @@ Page {
                 onFocusChanged: focus = false
             }
 
-            Row {
-                spacing: units.gu(1)
-                width: parent.width
+            ListItem.Standard {
+                id: noteCategoryLabel
+                showDivider: false
+                text: i18n.tr("Category: ") + mainView.category
 
-                ListItem.Standard {
-                    id: noteCategoryLabel
-                    showDivider: false
-                    width: parent.width / 2
-                    text: i18n.tr("Category: ") + mainView.category
-
-                    onClicked: {
-                        mainView.filter = "Category"
-                        showNotesWithFilter(mainView.category)
-                    }
+                onClicked: {
+                    mainView.filter = "Category"
+                    showNotesWithFilter(mainView.category)
                 }
+            }
 
-                ListItem.Standard {
-                    width: parent.width / 2
-                    showDivider: false
-                    text: {
-                        if (mainView.archive == "true") {
-                            return i18n.tr("Archive: Yes")
-                        }
-                            return i18n.tr("Archive: No")
+            ListItem.Standard {
+                showDivider: false
+                text: {
+                    if (mainView.archive == "true") {
+                        return i18n.tr("Archive: Yes")
                     }
+                        return i18n.tr("Archive: No")
                 }
-
             }
         }
 
@@ -128,6 +130,6 @@ Page {
                                  category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:Storage.getArchive(noteId),
                                  view:Storage.getView(noteId)})
         }
-        pageStack.push(filterNoteView)
+        pageStack.push(Qt.resolvedUrl("FilterNoteView"))
     }
 }

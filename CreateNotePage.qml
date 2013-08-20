@@ -3,24 +3,54 @@ import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
 import QtQuick.LocalStorage 2.0
+//import "TagsComponent.qml" as tagsComponent
 import "Storage.js" as Storage
 
 Page {
     id: createNotePage
+    title: i18n.tr("Create note")
 
-    Header {
-        id: header
-        title: i18n.tr("Create note")
+    tools: ToolbarItems {
+        id: createNoteToolbar
+        opened: true
+        locked: true
+
+        ToolbarButton {
+            action: Action {
+                id: createNoteAction
+                objectName: "createNoteAction"
+
+                text: i18n.tr("Create")
+                iconSource: Qt.resolvedUrl("images/add.svg")
+
+                onTriggered: {
+                    if (inputTitle.text == "") {
+                        inputTitle.placeholderText = i18n.tr("Give a title")
+                        return
+                    }
+
+                    Storage.setNote(idCount, inputTitle.text, inputBody.text, category, tag, 'false', 'main')
+                    mainView.notes.append({title: inputTitle.text, body: inputBody.text, id: idCount,
+                                     category: category, tag:tag, archive: 'false', view:"main"})
+                    idCount++
+
+                    inputTitle.text = ""
+                    inputBody.text = ""
+
+                    mainView.title = ""
+                    mainView.body = ""
+                    mainView.category = i18n.tr("None")
+                    mainView.tag = i18n.tr("None")
+                    pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+                }
+            }
+        }
     }
 
     Column {
-        height: parent.height - header.height
-        width: parent.width
         spacing: units.gu(2)
         anchors {
-            top: header.bottom
-            left: parent.left
-            right: parent.right
+            fill: parent
             verticalCenter: parent.verticalCenter
             margins: units.gu(2)
         }
@@ -54,36 +84,6 @@ Page {
             width: parent.width
 
             onClicked: PopupUtils.open(categoryComponent, categoryButton.itemHint)
-        }
-
-        Row {
-            spacing: units.gu(1)
-            width: parent.width
-
-            Button {
-                text: i18n.tr("Create")
-                width: parent.width
-                onClicked: {
-                    if (inputTitle.text == "") {
-                        inputTitle.placeholderText = i18n.tr("Give a title")
-                        return
-                    }
-
-                    Storage.setNote(idCount, inputTitle.text, inputBody.text, category, tag, 'false', 'main')
-                    notes.append({title: inputTitle.text, body: inputBody.text, id: idCount,
-                                     category: category, tag:tag, archive: 'false', view:"main"})
-                    idCount++
-
-                    inputTitle.text = ""
-                    inputBody.text = ""
-
-                    mainView.title = ""
-                    mainView.body = ""
-                    mainView.category = i18n.tr("None")
-                    mainView.tag = i18n.tr("None")
-                    pageStack.push(mainPage)
-                }
-            }
         }
     }
 }

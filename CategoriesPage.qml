@@ -5,14 +5,11 @@ import Ubuntu.Components.Popups 0.1
 
 Page {
     id: categoriesPage
+    title: i18n.tr("Categories")
+
     property string name
     property int pos
     property string mode
-
-    Header {
-        id: header
-        title: i18n.tr("Categories")
-    }
 
     tools : ToolbarItems {
         ToolbarButton {
@@ -34,12 +31,8 @@ Page {
 
     ListView {
         id: categoriesView
-        height: parent.height - header.height
-        width: parent.width
         anchors {
-            top: header.bottom
-            left: parent.left
-            right: parent.right
+            fill: parent
             margins: units.gu(2)
         }
 

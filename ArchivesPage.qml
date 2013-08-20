@@ -7,23 +7,14 @@ import "Storage.js" as Storage
 
 Page {
     id: archivePage
-    height: parent.height
+    title: i18n.tr("Archives")
 
     property string pos
 
-    Header {
-        id: header
-        title: i18n.tr("Archives")
-    }
-
     ListView {
         id: archivesView
-        height: parent.height - header.height
-        width: parent.width
         anchors {
-            top: header.bottom
-            left: parent.left
-            right: parent.right
+            fill: parent
             margins: units.gu(2)
         }
 
