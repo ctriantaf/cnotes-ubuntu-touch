@@ -9,7 +9,10 @@ Page {
     id: editNotePage
     title: i18n.tr("Edit note")
 
-    tools: ToolbarItems {
+    tools: ToolbarItems {        
+        opened: true
+        locked: true
+
         ToolbarButton {
             action: Action {
                 id: editDoneAction
@@ -19,10 +22,10 @@ Page {
                 iconSource: Qt.resolvedUrl("images/select.svg")
 
                 onTriggered: {
-                    Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, categoriesSelector.values[categoriesSelector.selectedIndex], tag, 'false', 'main')
+                    Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex], tag, 'false', 'main')
                     mainView.notes.get(mainView.position).title = inputTitleEdit.text
                     mainView.notes.get(mainView.position).body = inputBodyEdit.text
-                    mainView.notes.get(mainView.position).category = categories[categoriesSelectorEdit.selectedIndex]
+                    mainView.notes.get(mainView.position).category = categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex]
                     mainView.notes.get(mainView.position).tag = tag
 
                     mainView.tag = tag
@@ -72,6 +75,16 @@ Page {
             text: i18n.tr("Category")
             expanded: false
             values: categories
+            selectedIndex: getCategoryIndex(mainView.category)
+        }
+    }
+
+    function getCategoryIndex(name) {
+        var cat = Storage.fetchAllCategories()
+        for (var i = 0; i < cat.length; i++) {
+            if (cat[i] === name) {
+                return i
+            }
         }
     }
 }

@@ -224,7 +224,7 @@ function addCategory(name) {
     var db = getDatabase();
     var res = "";
     db.transaction(function(tx) {
-         var rs = tx.executeSql('INSERT OR REPLACE INTO categories VALUES (?);', [name]);
+         var rs = tx.executeSql('INSERT INTO categories VALUES (?);', [name]);
                //console.log(rs.rowsAffected)
                if (rs.rowsAffected > 0) {
                  res = "OK";
@@ -237,7 +237,10 @@ function addCategory(name) {
    return res;
 }
 
-// Replace category!
+function replaceCategory(old, name) {
+    removeCategory(old)
+    addCategory(name)
+}
 
 function removeCategory(name) {
     var db = getDatabase();

@@ -1,7 +1,9 @@
 import QtQuick 2.0
+import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
+import "Storage.js" as Storage
 
 Page {
     id: categoriesPage
@@ -43,12 +45,13 @@ Page {
             onClicked: {
                 if (categoryName !== i18n.tr("None")) {
                     categoriesPage.name = categoryName
-                    categoriesPage.pos = categoriesView.currentIndex
+                    categoriesPage.pos = index
                     categoriesPage.mode = "edit"
                     PopupUtils.open(editCategoriesComponent)
                 }
             }
         }
+
     }
 
 
@@ -78,10 +81,12 @@ Page {
                     if (categoriesModel.count != 0) {
                         if (categoriesPage.mode == "add") {
                             categoriesModel.append({categoryName: editCategoryName.text})
+                            Storage.addCategory(editCategoryName.text)
                         }
                         else {
-                            categoriesModel.remove(pos)
-                            categoriesModel.insert(pos, {categoryName: editCategoryName.text})
+                            categoriesModel.remove(categoriesPage.pos)
+                            categoriesModel.insert(categoriesPage.pos, {categoryName: editCategoryName.text})
+                            Storage.replaceCategory(name, editCategoryName.text)
                         }
                     }
 
@@ -92,8 +97,10 @@ Page {
             Button {
                 text: i18n.tr("Delete")
                 onClicked: {
-                    if (categoriesModel.count != 0)
-                        categoriesModel.remove(pos)
+                    if (categoriesPage.mode == "edit") {
+                        categoriesModel.remove(categoriesPage.pos)
+                        Storage.removeCategory(name)
+                    }
                     PopupUtils.close(editCategoriesDialog)
                 }
             }

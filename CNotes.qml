@@ -100,7 +100,23 @@ MainView {
 
     PageStack {
         id: pageStack
-        Component.onCompleted: pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+        Component.onCompleted: {
+//            Storage.deleteDatabase()
+            Storage.initialize()
+            loadNotes()
+            loadArchiveNotes()
+
+            categoriesModel.append({categoryName: "None"})
+            categoriesModel.append({categoryName: "Things to do"})
+            categoriesModel.append({categoryName: "Work"})
+            Storage.addCategory("None")
+            Storage.addCategory("Things to do")
+            Storage.addCategory("Work")
+
+            pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+
+    //        u1Backend.setNote("a", "hello", "world", "a", "work", "false", "main")
+        }
 
         Component {
             id: tagsComponent

@@ -5,19 +5,6 @@ import "Storage.js" as Storage
 //import "U1Backend.qml" as U1Backend
 
 Page {
-    Component.onCompleted: {
-//        Storage.deleteDatabase()
-        Storage.initialize()
-        loadNotes()
-        loadArchiveNotes()
-
-        categoriesModel.append({categoryName: "Things to do"})
-        categoriesModel.append({categoryName: "Work"})
-        Storage.addCategory("Things to do")
-        Storage.addCategory("Work")
-
-//        u1Backend.setNote("a", "hello", "world", "a", "work", "false", "main")
-    }
 
     U1Backend {
         id: u1Backend
