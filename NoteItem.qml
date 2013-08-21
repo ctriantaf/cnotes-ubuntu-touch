@@ -44,8 +44,8 @@ Subtitled {
             _archive = 'false'
             _view = "main"
             Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view)
-            archivesModel.remove(archivesPage.pos)
-            notes.insert(_id, {id:parseInt(_id), title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view})
+            archivesModel.remove(archivePage.pos)
+            notes.insert(_id, {id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view})
         }
     }
 

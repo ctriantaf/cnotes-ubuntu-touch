@@ -101,7 +101,7 @@ MainView {
     PageStack {
         id: pageStack
         Component.onCompleted: {
-//            Storage.deleteDatabase()
+            Storage.deleteDatabase()
             Storage.initialize()
             loadNotes()
             loadArchiveNotes()
@@ -153,6 +153,7 @@ MainView {
                                 id: tagButton
                                 text: tag
                                 color: "#A55263"
+                                anchors.bottomMargin: units.gu(1)
                                 onClicked: {
                                     if (tagTextField.text.length != 0) {
                                         tagTextField.text = tagTextField.text.toString() + "," + tag

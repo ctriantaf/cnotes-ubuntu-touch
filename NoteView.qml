@@ -119,6 +119,7 @@ Page {
     }
 
     function showNotesWithFilter (f) {
+        filterNotesModel.clear()
         if (mainView.filter == "Tag") {
             noteViewPage.allNotes = Storage.fetchAllNotesWithTag(f)
         }
