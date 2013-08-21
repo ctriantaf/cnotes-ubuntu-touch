@@ -29,9 +29,9 @@ Page {
                         return
                     }
 
-                    Storage.setNote(idCount, inputTitle.text, inputBody.text, category, tag, 'false', 'main')
+                    Storage.setNote(idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex], tag, 'false', 'main')
                     mainView.notes.append({title: inputTitle.text, body: inputBody.text, id: idCount,
-                                     category: category, tag:tag, archive: 'false', view:"main"})
+                                     category: categoriesSelector.values[categoriesSelector.selectedIndex], tag:tag, archive: 'false', view:"main"})
                     idCount++
 
                     inputTitle.text = ""
@@ -72,18 +72,21 @@ Page {
             id: tagsButton
             text: i18n.tr("Tags: ") + mainView.tag
             width: parent.width
+            color: "#A55263"
 
             onClicked: {
                 PopupUtils.open(tagsComponent, tagsButton.itemHint)
             }
         }
 
-        Button {
-            id: categoryButton
-            text: i18n.tr("Category: ") + mainView.category
-            width: parent.width
+        ListItem.ValueSelector {
+            id: categoriesSelector
+            property variant categories: Storage.fetchAllCategories()
 
-            onClicked: PopupUtils.open(categoryComponent, categoryButton.itemHint)
+            width: parent.width
+            text: i18n.tr("Category")
+            expanded: false
+            values: categories
         }
     }
 }

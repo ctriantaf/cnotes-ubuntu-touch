@@ -30,8 +30,8 @@ Subtitled {
     property string _archive
     property string _view
 
-    text: _title
-    subText: _body
+    text: getHtmlText(_title)
+    subText: getHtmlText(_body)
 
     onItemRemoved: {
         if (_view === "main") {

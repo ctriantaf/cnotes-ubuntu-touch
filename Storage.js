@@ -14,6 +14,7 @@ function initialize() {
             // If the table exists, this is skipped
             tx.executeSql('CREATE TABLE IF NOT EXISTS notes(id TEXT NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL,'
                          + 'category TEXT NOT NULL, tag TEXT NOT NULL, archive TEXT NOT NULL, view TEXT NOT NULL)');
+            tx.executeSql('CREATE TABLE IF NOT EXISTS categories(name TEXT NOT NULL)');
       });
 }
 
@@ -22,6 +23,7 @@ function deleteDatabase() {
     db.transaction(
         function(tx){
             tx.executeSql("DROP TABLE notes;");
+            tx.executeSql("DROP TABLE categories")
 //            tx.executeSql("DROP DATABASE CNotesDB;");
         }
     );
@@ -207,3 +209,48 @@ function getView(id) {
     return res
 }
 
+function fetchAllCategories() {
+    var db = getDatabase();
+    var res= new Array();
+    db.transaction(function(tx) {
+        var rs = tx.executeSql('SELECT * FROM categories;');
+        for (var i = 0; i < rs.rows.length; i++) {
+            res[i] = rs.rows.item(i).name
+        }
+    })
+    return res
+}
+function addCategory(name) {
+    var db = getDatabase();
+    var res = "";
+    db.transaction(function(tx) {
+         var rs = tx.executeSql('INSERT OR REPLACE INTO categories VALUES (?);', [name]);
+               //console.log(rs.rowsAffected)
+               if (rs.rowsAffected > 0) {
+                 res = "OK";
+               } else {
+                 res = "Error";
+               }
+         }
+   );
+   // The function returns “OK” if it was successful, or “Error” if it wasn't
+   return res;
+}
+
+// Replace category!
+
+function removeCategory(name) {
+    var db = getDatabase();
+    var res = "";
+    db.transaction(function(tx) {
+        var rs = tx.executeSql('DELETE FROM categories WHERE name=?;', [name]);
+        //console.log(rs.rowsAffected)
+        if (rs.rowsAffected > 0) {
+            res = "OK";
+        } else {
+            res = "Error";
+        }
+    }
+      );
+    return res;
+}

@@ -20,7 +20,7 @@ Page {
         model: filterNotesModel
         delegate: NoteItem {
             _id: id
-            _title: title
+            _title: getHtmlText(title)
             _body: {
                 if (body.length > 80)
                     return body.substring(0, 80) + "..."

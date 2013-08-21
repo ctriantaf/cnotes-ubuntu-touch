@@ -9,6 +9,29 @@ Page {
     id: editNotePage
     title: i18n.tr("Edit note")
 
+    tools: ToolbarItems {
+        ToolbarButton {
+            action: Action {
+                id: editDoneAction
+                objectName: "editDoneAction"
+
+                text: i18n.tr("Apply")
+                iconSource: Qt.resolvedUrl("images/select.svg")
+
+                onTriggered: {
+                    Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, categoriesSelector.values[categoriesSelector.selectedIndex], tag, 'false', 'main')
+                    mainView.notes.get(mainView.position).title = inputTitleEdit.text
+                    mainView.notes.get(mainView.position).body = inputBodyEdit.text
+                    mainView.notes.get(mainView.position).category = categories[categoriesSelectorEdit.selectedIndex]
+                    mainView.notes.get(mainView.position).tag = tag
+
+                    mainView.tag = tag
+                    pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+                }
+            }
+        }
+    }
+
     Column {
         spacing: units.gu(2)
         anchors {
@@ -36,31 +59,19 @@ Page {
             id: editTagsButton
             text: i18n.tr("Tags: ") + tag
             width: parent.width
+            color: "#A55263"
 
             onClicked: PopupUtils.open(tagsComponent, editTagsButton.itemHint)
         }
 
-        Button {
-            id: editCategoryButton
-            text: i18n.tr("Category: ") + category
+        ListItem.ValueSelector {
+            id: categoriesSelectorEdit
+            property variant categories: Storage.fetchAllCategories()
+
             width: parent.width
-
-            onClicked: PopupUtils.open(categoryComponent, editCategoryButton.itemHint)
-        }
-
-        Button {
-            text: i18n.tr("Done")
-            width: parent.width
-            onClicked: {
-                Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, category, tag, 'false', 'main')
-                mainView.notes.get(mainView.position).title = inputTitleEdit.text
-                mainView.notes.get(mainView.position).body = inputBodyEdit.text
-                mainView.notes.get(mainView.position).category = category
-                mainView.notes.get(mainView.position).tag = tag
-
-                mainView.tag = tag
-                pageStack.push(Qt.resolvedUrl("MainPage.qml"))
-            }
+            text: i18n.tr("Category")
+            expanded: false
+            values: categories
         }
     }
 }

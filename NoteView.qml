@@ -6,7 +6,7 @@ import "Storage.js" as Storage
 
 Page {
     id: noteViewPage
-    title: mainView.title
+    title: getHtmlText(mainView.title)
 
     property variant allNotes
 
@@ -70,7 +70,9 @@ Page {
                 activeFocusOnPress: false
                 height: parent.height - header.height - noteCategoryLabel.height - units.gu(2)
                 width: parent.width
-                text: mainView.body
+                text: getHtmlText(mainView.body)
+                textFormat: TextEdit.RichText
+                color: "#A55263"
 
                 onFocusChanged: focus = false
             }
@@ -130,6 +132,6 @@ Page {
                                  category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:Storage.getArchive(noteId),
                                  view:Storage.getView(noteId)})
         }
-        pageStack.push(Qt.resolvedUrl("FilterNoteView"))
+        pageStack.push(Qt.resolvedUrl("FilterNoteView.qml"))
     }
 }

@@ -41,10 +41,12 @@ Page {
             text: categoryName
 
             onClicked: {
-                categoriesPage.name = categoryName
-                categoriesPage.pos = categoriesView.currentIndex
-                categoriesPage.mode = "edit"
-                PopupUtils.open(editCategoriesComponent)
+                if (categoryName !== i18n.tr("None")) {
+                    categoriesPage.name = categoryName
+                    categoriesPage.pos = categoriesView.currentIndex
+                    categoriesPage.mode = "edit"
+                    PopupUtils.open(editCategoriesComponent)
+                }
             }
         }
     }

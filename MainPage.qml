@@ -2,13 +2,25 @@ import QtQuick 2.0
 import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import "Storage.js" as Storage
+//import "U1Backend.qml" as U1Backend
 
 Page {
     Component.onCompleted: {
-//        Storage.deleteDatabase()
+        Storage.deleteDatabase()
         Storage.initialize()
         loadNotes()
         loadArchiveNotes()
+
+        categoriesModel.append({categoryName: "Things to do"})
+        categoriesModel.append({categoryName: "Work"})
+        Storage.addCategory("Things to do")
+        Storage.addCategory("Work")
+
+//        u1Backend.setNote("a", "hello", "world", "a", "work", "false", "main")
+    }
+
+    U1Backend {
+        id: u1Backend
     }
 
     id: mainPage
@@ -51,17 +63,11 @@ Page {
                 text: i18n.tr("Categories")
 
                 onTriggered: {
-                    categoriesModel.append({categoryName: "Things to do"})
-                    categoriesModel.append({categoryName: "Work"})
-                    pageStack.push(Qt.resolveUrl("CategoriesPage.qml"))
+                    pageStack.push(Qt.resolvedUrl("CategoriesPage.qml"))
                 }
             }
         }
     }
-
-//    ListModel {
-//        id: notes
-//    }
 
     ListView {
         id: notesView

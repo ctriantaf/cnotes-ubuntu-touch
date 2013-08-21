@@ -3,12 +3,9 @@ import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
+import U1db 1.0 as U1db
 import "Storage.js" as Storage
-import "components"
-
-/*!
-    \brief MainView with a Label and Button elements.
-*/
+import "showdown.js" as Showdown
 
 MainView {
     id: mainView
@@ -41,26 +38,23 @@ MainView {
     property string archive
 
     property variant notes
+    property variant categoriesModel
     property variant archivesModel
     property variant filterNotesModel
     property variant archiveNotes
     property variant allNotes
 
+    property string focusedEntry: ""
+
     notes: ListModel {}
 
-    ListModel { id: categoriesModel }
+    categoriesModel: ListModel {}
 
     archivesModel: ListModel {}
 
     filterNotesModel: ListModel {}
 
     ListModel { id: noteTagsModel }
-
-    ListModel {
-        // Here are stored all the tags
-        id: tags
-    }
-
 
     ListModel {
         // Here are stored the three last used tags (for the gridView)
@@ -91,12 +85,17 @@ MainView {
     }
 
     function containTag(t) {
-        for (var i = 0; i < tags.count; i++) {
-            if (t === tags.get(i).tag) {
+        for (var i = 0; i < tagsModel.count; i++) {
+            if (t === tagsModel.get(i).tag) {
                 return true
             }
         }
         return false
+    }
+
+    function getHtmlText(text) {
+        var converter = new Showdown.Showdown.converter();
+        return converter.makeHtml(text)
     }
 
     PageStack {
@@ -119,7 +118,6 @@ MainView {
                     ListItem.Empty {
                         id: tagListItem
                         visible: {
-                            print (tagsModel.count)
                             if (tagsModel.count == 0) {
                                 return false
                             }
@@ -138,6 +136,7 @@ MainView {
                             delegate: Button {
                                 id: tagButton
                                 text: tag
+                                color: "#A55263"
                                 onClicked: {
                                     if (tagTextField.text.length != 0) {
                                         tagTextField.text = tagTextField.text.toString() + "," + tag
@@ -179,6 +178,7 @@ MainView {
                                 id: addTagsButton
                                 height: tagTextField.height
                                 text: i18n.tr("Add tags")
+                                color: "#A55263"
 
                                 onClicked: {
                                     if (tagTextField.text == "")
@@ -190,10 +190,9 @@ MainView {
                                         if (!containTag(tagTextField.text.split(",")[i])) {
                                             if (tagsModel.count == 3) {
                                                 tagsModel.remove(0)
-                                                print ("removed")
                                             }
                                             tagsModel.append({tag: tagTextField.text.split(",")[i]})
-                                            tags.append({tag: tagTextField.text.split(",")[i]})
+//                                            tags.append({tag: tagTextField.text.split(",")[i]})
                                         }
                                     }
 
@@ -221,62 +220,85 @@ MainView {
                         right: parent.right
                     }
 
-                    ListItem.Empty {
-                        Label {
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                                left: parent.left
-                                margins: units.gu(2)
+                    ListView {
+                        id: categoriesPopoverView
+                        model: categoriesModel
+                        delegate: ListItem.Empty {
+                            Label {
+                                id: categoryLabel
+                                anchors {
+                                    verticalCenter: parent.verticalCenter
+                                    left: parent.left
+                                    margins: units.gu(2)
+                                }
+
+                                text: categoryName
+                                fontSize: "medium"
+                                color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
                             }
 
-                            text: i18n.tr("None")
-                            fontSize: "medium"
-                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
-                        }
-
-                        onClicked: {
-                            category = "None"
-                            PopupUtils.close(categoryPopover)
+                            onClicked: {
+                                categoryName = categoryLabel.text
+                            }
                         }
                     }
 
-                    ListItem.Empty {
-                        Label {
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                                left: parent.left
-                                margins: units.gu(2)
-                            }
+//                    ListItem.Empty {
+//                        Label {
+//                            anchors {
+//                                verticalCenter: parent.verticalCenter
+//                                left: parent.left
+//                                margins: units.gu(2)
+//                            }
 
-                            text: i18n.tr("Thing to do")
-                            fontSize: "medium"
-                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
-                        }
+//                            text: i18n.tr("None")
+//                            fontSize: "medium"
+//                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+//                        }
 
-                        onClicked: {
-                            category = "Things to do"
-                            PopupUtils.close(categoryPopover)
-                        }
-                    }
+//                        onClicked: {
+//                            category = "None"
+//                            PopupUtils.close(categoryPopover)
+//                        }
+//                    }
 
-                    ListItem.Empty {
-                        Label {
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                                left: parent.left
-                                margins: units.gu(2)
-                            }
+//                    ListItem.Empty {
+//                        Label {
+//                            anchors {
+//                                verticalCenter: parent.verticalCenter
+//                                left: parent.left
+//                                margins: units.gu(2)
+//                            }
 
-                            text: i18n.tr("Work")
-                            fontSize: "medium"
-                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
-                        }
+//                            text: i18n.tr("Thing to do")
+//                            fontSize: "medium"
+//                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+//                        }
 
-                        onClicked: {
-                            category = "Work"
-                            PopupUtils.close(categoryPopover)
-                        }
-                    }
+//                        onClicked: {
+//                            category = "Things to do"
+//                            PopupUtils.close(categoryPopover)
+//                        }
+//                    }
+
+//                    ListItem.Empty {
+//                        Label {
+//                            anchors {
+//                                verticalCenter: parent.verticalCenter
+//                                left: parent.left
+//                                margins: units.gu(2)
+//                            }
+
+//                            text: i18n.tr("Work")
+//                            fontSize: "medium"
+//                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+//                        }
+
+//                        onClicked: {
+//                            category = "Work"
+//                            PopupUtils.close(categoryPopover)
+//                        }
+//                    }
 
 //                    ListItem.Empty {
 //                        ListView {
