@@ -6,7 +6,7 @@ import "Storage.js" as Storage
 
 Page {
     Component.onCompleted: {
-        Storage.deleteDatabase()
+//        Storage.deleteDatabase()
         Storage.initialize()
         loadNotes()
         loadArchiveNotes()
