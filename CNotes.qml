@@ -1,8 +1,10 @@
 import QtQuick 2.0
 import QtQuick.LocalStorage 2.0
+import QtMultimedia 5.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
+import Ubuntu.Layouts 0.1
 import U1db 1.0 as U1db
 import "Storage.js" as Storage
 import "showdown.js" as Showdown
@@ -43,8 +45,13 @@ MainView {
     property variant filterNotesModel
     property variant archiveNotes
     property variant allNotes
+    property variant noteLinksModel
 
     property string focusedEntry: ""
+
+//    U1Backend {
+//        id: u1Backend
+//    }
 
     notes: ListModel {}
 
@@ -53,6 +60,8 @@ MainView {
     archivesModel: ListModel {}
 
     filterNotesModel: ListModel {}
+
+    noteLinksModel: ListModel {}
 
     ListModel { id: noteTagsModel }
 
@@ -84,6 +93,14 @@ MainView {
         }
     }
 
+    function loadCategories() {
+        var cat = Storage.fetchAllCategories()
+        for (var i = 0; i < cat.length; i++) {
+//            print(cat[i])
+            categoriesModel.append({categoryName: cat[i]})
+        }
+    }
+
     function containTag(t) {
         for (var i = 0; i < tagsModel.count; i++) {
             if (t === tagsModel.get(i).tag) {
@@ -98,24 +115,89 @@ MainView {
         return converter.makeHtml(text)
     }
 
+    function getLinksArray() {
+        if (noteLinksModel.length === 0) {
+            return []
+        }
+
+        var res = new Array()
+        for (var i = 0; i < noteLinksModel.length; i++) {
+            print (noteLinksModel[i])
+            res[i] = noteLinksModel[i]
+        }
+        return res
+    }
+
     PageStack {
         id: pageStack
         Component.onCompleted: {
-            Storage.deleteDatabase()
+//            Storage.deleteDatabase()
             Storage.initialize()
             loadNotes()
             loadArchiveNotes()
+            loadCategories()
 
-            categoriesModel.append({categoryName: "None"})
-            categoriesModel.append({categoryName: "Things to do"})
-            categoriesModel.append({categoryName: "Work"})
-            Storage.addCategory("None")
-            Storage.addCategory("Things to do")
-            Storage.addCategory("Work")
+//            categoriesModel.append({categoryName: "None"})
+//            categoriesModel.append({categoryName: "Things to do"})
+//            categoriesModel.append({categoryName: "Work"})
+//            Storage.addCategory("None")
+//            Storage.addCategory("Things to do")
+//            Storage.addCategory("Work")
 
-            pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+//            pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+            pageStack.push(mainConditionalPage)
 
-    //        u1Backend.setNote("a", "hello", "world", "a", "work", "false", "main")
+//            u1Backend.setNote("a", "hello", "world", "a", "work", "false", "main")
+        }
+
+        Page {
+            id: mainConditionalPage
+
+            Layouts {
+                anchors.fill: parent
+                layouts: [
+                    ConditionalLayout {
+                        name:  "tabletMainView"
+                        when: mainView.width >= units.gu(80)
+
+                        Row {
+                            anchors.fill: parent
+                            spacing: units.gu(2)
+
+                            ItemLayout {
+                                item: "notesSidebar"
+                                width: parent.width / 3
+                                height: parent.height
+                            }
+
+                            ItemLayout {
+                                item: "noteView"
+                                width: parent.width * 2 / 3
+                                height: parent.height
+                            }
+                        }
+                    },
+
+                    ConditionalLayout {
+                        name: "phoneMainView"
+                        when: mainView.width < units.gu(80)
+
+                        ItemLayout {
+                            item: "notesSidebar"
+                            anchors.fill: parent
+                        }
+                    }
+
+                ]
+
+                MainPage {
+                    Layouts.item: "notesSidebar"
+                }
+
+                NoteView {
+                    Layouts.item: "noteView"
+                }
+            }
         }
 
         Component {
@@ -260,81 +342,6 @@ MainView {
                         }
                     }
 
-//                    ListItem.Empty {
-//                        Label {
-//                            anchors {
-//                                verticalCenter: parent.verticalCenter
-//                                left: parent.left
-//                                margins: units.gu(2)
-//                            }
-
-//                            text: i18n.tr("None")
-//                            fontSize: "medium"
-//                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
-//                        }
-
-//                        onClicked: {
-//                            category = "None"
-//                            PopupUtils.close(categoryPopover)
-//                        }
-//                    }
-
-//                    ListItem.Empty {
-//                        Label {
-//                            anchors {
-//                                verticalCenter: parent.verticalCenter
-//                                left: parent.left
-//                                margins: units.gu(2)
-//                            }
-
-//                            text: i18n.tr("Thing to do")
-//                            fontSize: "medium"
-//                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
-//                        }
-
-//                        onClicked: {
-//                            category = "Things to do"
-//                            PopupUtils.close(categoryPopover)
-//                        }
-//                    }
-
-//                    ListItem.Empty {
-//                        Label {
-//                            anchors {
-//                                verticalCenter: parent.verticalCenter
-//                                left: parent.left
-//                                margins: units.gu(2)
-//                            }
-
-//                            text: i18n.tr("Work")
-//                            fontSize: "medium"
-//                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
-//                        }
-
-//                        onClicked: {
-//                            category = "Work"
-//                            PopupUtils.close(categoryPopover)
-//                        }
-//                    }
-
-//                    ListItem.Empty {
-//                        ListView {
-//                            width: parent.width
-//                            model: categoriesModel
-//                            delegate: Label {
-//                                anchors {
-//                                    verticalCenter: parent.verticalCenter
-//                                    left: parent.left
-//                                    margins: units.gu(2)
-//                                }
-
-//                                text: i18n.tr(categoryName)
-//                                fontSize: "medium"
-//                                color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
-//                            }
-//                        }
-//                    }
-
                     ListItem.Empty {
                         id: newCategoryLabel
                         Label {
@@ -388,6 +395,100 @@ MainView {
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        Component {
+            id: cameraComponent
+
+            Dialog {
+                id: cameraDialog
+                title: i18n.tr("Take a photo")
+
+                property string path: "./pictures/" + mainView.id + "/"
+                property string location
+
+                Camera {
+                    id: camera
+                    imageCapture {
+                        onImageCaptured: photoPreview.source = preview
+                    }
+                }
+
+                VideoOutput {
+                    source: camera
+                    focus: visible
+                    height: units.gu(20)
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            if (imageTitle.text.length == 0) {
+                                imageTitle.focus = true
+                                return
+                            }
+
+                            print(path)
+                            camera.imageCapture.captureToLocation(path + imageTitle.text)
+                        }
+                    }
+                }
+
+                Image {
+                    id: photoPreview
+                    height: units.gu(20)
+                }
+
+                TextField {
+                    id: imageTitle
+                    placeholderText: i18n.tr("Give title")
+                }
+
+                Row {
+                    spacing: units.gu(1)
+                    Button {
+                        text: i18n.tr("Close")
+                        width: parent.width / 2
+                        color: "#A55263"
+                        onClicked: PopupUtils.close(cameraDialog)
+                    }
+
+                    Button {
+                        text: i18n.tr("Add")
+                        width: parent.width / 2
+                        color: "#A55263"
+//                        onClicked:
+                    }
+                }
+            }
+        }
+
+        Component {
+            id: linkComponent
+
+            Dialog {
+                id: linkDialog
+                title: i18n.tr("Enter link")
+
+                property string mode
+
+                TextField {
+                    id: linkTextField
+                }
+
+                Button {
+                    text: i18n.tr("Enter")
+                    color: "#A55263"
+
+                    onClicked: {
+                        var link = "<link href='" + linkTextField.text + "'>"
+                        print (link)
+                        noteLinksModel.append({'link': link})
+//                        linksSelector.visible = true
+                        CreateNotePage.refreshLinksInCreate()
+                        PopupUtils.close(linkDialog)
                     }
                 }
             }

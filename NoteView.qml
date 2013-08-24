@@ -1,12 +1,14 @@
 import QtQuick 2.0
 import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
+import Ubuntu.Layouts 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import "Storage.js" as Storage
 
 Page {
     id: noteViewPage
     title: getHtmlText(mainView.title)
+//    Layouts.item: "noteView"
 
     property variant allNotes
 
@@ -52,6 +54,7 @@ Page {
     }
 
     Row {
+
         anchors {
             fill: parent
             margins: units.gu(2)

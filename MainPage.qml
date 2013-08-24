@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
+import Ubuntu.Layouts 0.1
 import "Storage.js" as Storage
 //import "U1Backend.qml" as U1Backend
 
