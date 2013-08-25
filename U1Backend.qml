@@ -30,6 +30,5 @@ Item {
     function getTitle(id) {
         var tempValues = {};
         tempValues = contents.title
-        print (tempValues)
     }
 }

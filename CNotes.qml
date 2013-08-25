@@ -23,11 +23,13 @@ MainView {
     */
     //automaticOrientation: true
     
-    width: units.gu(50)
+    width: units.gu(90)
     height: units.gu(75)
     headerColor: "#57365E"
     backgroundColor: "#A55263"
     footerColor: "#D75669"
+
+    property bool wideAspect: width > units.gu(80)
 
     property string idCount : "0"
     property string id
@@ -102,7 +104,6 @@ MainView {
     function loadCategories() {
         var cat = Storage.fetchAllCategories()
         for (var i = 0; i < cat.length; i++) {
-//            print(cat[i])
             categoriesModel.append({categoryName: cat[i]})
         }
     }
@@ -146,7 +147,7 @@ MainView {
     }
 
     PageStack {
-        id: pageStack
+        id: rootPageStack
         Component.onCompleted: {
             Storage.deleteDatabase()
             Storage.initialize()
@@ -161,64 +162,76 @@ MainView {
             Storage.addCategory("Things to do")
             Storage.addCategory("Work")
 
-            pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+//            if (wideAspect) {
+//                rootPageStack.push(Qt.resolvedUrl("TabletView.qml"))
+//            }
+//            else {
+//                rootPageStack.push(Qt.resolvedUrl("MainPage.qml"))
+//            }
 
+            rootPageStack.push(mainConditionalPage)
 //            pageStack.push(mainConditionalPage)
 
 //            u1Backend.setNote("a", "hello", "world", "a", "work", "false", "main")
         }
 
-//        Page {
-//            id: mainConditionalPage
+        Page {
+            id: mainConditionalPage
+            visible: false
+            title: "CNotes"
 
-//            Layouts {
-//                anchors.fill: parent
-//                layouts: [
-//                    ConditionalLayout {
-//                        name:  "tabletMainView"
-//                        when: mainView.width >= units.gu(80)
+            Layouts {
+                anchors.fill: parent
+                layouts: [
+                    ConditionalLayout {
+                        name:  "tabletMainView"
+                        when: mainView.width >= units.gu(80)
 
-//                        Row {
-//                            anchors.fill: parent
-//                            spacing: units.gu(2)
+                        Row {
+                            anchors.fill: parent
+                            spacing: units.gu(2)
 
-//                            ItemLayout {
-//                                item: "notesSidebar"
-//                                width: parent.width / 3
-//                                height: parent.height
-//                            }
+                            ItemLayout {
+                                item: "notesSidebar"
+                                width: parent.width / 3
+                                height: parent.height
+                            }
 
-//                            ItemLayout {
-//                                item: "noteView"
-//                                width: parent.width * 2 / 3
-//                                height: parent.height
-//                            }
-//                        }
-//                    },
+                            ItemLayout {
+                                item: "noteView"
+                                width: parent.width * 2 / 3
+                                height: parent.height
+                            }
+                        }
+                    }/*,
 
-//                    ConditionalLayout {
-//                        name: "phoneMainView"
-//                        when: mainView.width < units.gu(80)
+                    ConditionalLayout {
+                        name: "phoneMainView"
+                        when: mainView.width < units.gu(80)
 
-//                        ItemLayout {
-//                            item: "notesSidebar"
-//                            anchors.fill: parent
-//                        }
-//                    }
+                        ItemLayout {
+                            item: "notesSidebar"
+                            anchors.fill: parent
+                        }
+                    }*/
 
-//                ]
+                ]
 
-//                MainPage {
-//                    id: mainPage
-//                    Layouts.item: "notesSidebar"
-//                }
+                NotesListView {
+                    id: notesListView
+                    width: parent.width / 3
+                    Layouts.item: "notesSidebar"
+                }
 
-//                NoteView {
-//                    id: noteView
-//                    Layouts.item: "noteView"
-//                }
-//            }
-//        }
+                NoteView {
+                    id: noteView
+                    Layouts.item: "noteView"
+//                    visible: notes.count > 0 ? true : false
+                    width: parent.width * 2 / 3
+                    visible: true
+                }
+            }
+        }
 
         Component {
             id: tagsComponent

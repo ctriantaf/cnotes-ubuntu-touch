@@ -27,13 +27,19 @@ Tabs {
                     noteLinksModel.clear()
                     var links = Storage.getLinks(mainView.id)
                     for (var i = 0; i < links.split(",").length; i++) {
-                        print (links.split(",")[i])
                         noteLinksModel.append({'link': links.split(",")[i]})
                     }
                 }
             }
 
             tools: ToolbarItems {
+                visible: {
+                    if (mainView.wideAspect) {
+                        return false
+                    }
+                    return true
+                }
+
                 ToolbarButton {
                     action: Action {
                         id: editNoteViewAction
