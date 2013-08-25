@@ -13,7 +13,7 @@ function initialize() {
             // Create the notes table if it doesn't already exist
             // If the table exists, this is skipped
             tx.executeSql('CREATE TABLE IF NOT EXISTS notes(id TEXT NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL,'
-                         + 'category TEXT NOT NULL, tag TEXT NOT NULL, archive TEXT NOT NULL, view TEXT NOT NULL)');
+                         + 'category TEXT NOT NULL, tag TEXT NOT NULL, archive TEXT NOT NULL, view TEXT NOT NULL, links TEXT NOT NULL)');
             tx.executeSql('CREATE TABLE IF NOT EXISTS categories(name TEXT NOT NULL)');
       });
 }
@@ -30,11 +30,11 @@ function deleteDatabase() {
 }
 
 // This function is used to write a setting into the database
-function setNote(id, title, body, category, tag, archive, view) {
+function setNote(id, title, body, category, tag, archive, view, links) {
    var db = getDatabase();
    var res = "";
    db.transaction(function(tx) {
-        var rs = tx.executeSql('INSERT OR REPLACE INTO notes VALUES (?,?,?,?,?,?,?);', [id,title,body,category,tag,archive,view]);
+        var rs = tx.executeSql('INSERT OR REPLACE INTO notes VALUES (?,?,?,?,?,?,?,?);', [id,title,body,category,tag,archive,view,links]);
               //console.log(rs.rowsAffected)
               if (rs.rowsAffected > 0) {
                 res = "OK";
@@ -202,6 +202,20 @@ function getView(id) {
         var rs = tx.executeSql('SELECT view FROM notes WHERE id=?;', [id]);
         if (rs.rows.length > 0) {
             res = rs.rows.item(0).view;
+        } else {
+            res = "Unknown";
+        }
+    })
+    return res
+}
+
+function getLinks(id) {
+    var db = getDatabase();
+    var res="";
+    db.transaction(function(tx) {
+        var rs = tx.executeSql('SELECT links FROM notes WHERE id=?;', [id]);
+        if (rs.rows.length > 0) {
+            res = rs.rows.item(0).links;
         } else {
             res = "Unknown";
         }

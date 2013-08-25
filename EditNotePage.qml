@@ -93,7 +93,11 @@ Tabs {
         }
     }
 
-    Tab {
-        title: i18n.tr("Images")
+    ImagesTab {
+        id: imagesTabEdit
+    }
+
+    LinksTab {
+        id: linksTabEdit
     }
 }

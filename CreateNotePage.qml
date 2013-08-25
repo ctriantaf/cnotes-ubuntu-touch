@@ -3,10 +3,11 @@ import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
 import QtQuick.LocalStorage 2.0
-//import "TagsComponent.qml" as tagsComponent
 import "Storage.js" as Storage
 
 Tabs {
+    id: createTabs
+
     Tab {
         title: i18n.tr("Details")
         page: Page {
@@ -32,7 +33,9 @@ Tabs {
                                 return
                             }
 
-                            Storage.setNote(idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex], tag, 'false', 'main')
+                            Storage.setNote(idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
+                                            tag, 'false', 'main', mainView.getLinksForStorage())
+
                             mainView.notes.append({title: inputTitle.text, body: inputBody.text, id: idCount,
                                              category: categoriesSelector.values[categoriesSelector.selectedIndex], tag:tag, archive: 'false', view:"main"})
                             idCount++
@@ -46,18 +49,6 @@ Tabs {
                             mainView.tag = i18n.tr("None")
                             pageStack.push(Qt.resolvedUrl("MainPage.qml"))
                         }
-                    }
-                }
-
-                ToolbarButton {
-                    action: Action {
-                        id: addLinkEdit
-                        objectName: "addLinkEdit"
-
-                        text: i18n.tr("Link")
-                        iconSource: Qt.resolvedUrl("images/add.svg")
-
-                        onTriggered: PopupUtils.open (linkComponent)
                     }
                 }
             }
@@ -103,47 +94,16 @@ Tabs {
                     expanded: false
                     values: categories
                 }
-
-                ListItem.ValueSelector {
-                    id: linksSelector
-
-                    width: parent.width
-                    text: i18n.tr("Links")
-                    expanded: false
-//                    visible: false
-                    values: mainView.getLinksArray()
-
-                    onClicked: Qt.openUrlExternally(values[selectedIndex])
-                }
             }
         }
     }
 
-    function refreshLinksInCreate() {
-        linksSelector.update()
+    ImagesTab {
+        id: imagesTab
     }
 
-    Tab {
-        title: i18n.tr("Images")
-        page: Page {
-
-            tools: ToolbarItems {
-                ToolbarButton {
-                    action: Action {
-                        id: cameraAction
-                        objectName: "cameraAction"
-
-                        text: i18n.tr("Camera")
-                        iconSource: Qt.resolvedUrl("images/camcorder.svg")
-
-                        onTriggered: {
-                            mainView.id = idCount
-                            PopupUtils.open(cameraComponent)
-                        }
-                    }
-                }
-            }
-        }
+    LinksTab {
+        id: linksTab
     }
 }
 

@@ -29,6 +29,7 @@ Subtitled {
     property string _category
     property string _archive
     property string _view
+    property string _links
 
     text: getHtmlText(_title)
     subText: getHtmlText(_body)
@@ -37,20 +38,21 @@ Subtitled {
         if (_view === "main") {
             _archive = 'true'
             _view = "archive"
-            Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view)
-            archivesModel.append({id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view})
+            Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view, _links)
+            archivesModel.append({id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view, links:_links})
         }
         else {
             _archive = 'false'
             _view = "main"
-            Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view)
+            Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view, _links)
             archivesModel.remove(archivePage.pos)
-            notes.insert(_id, {id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view})
+            notes.insert(_id, {id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view, links:_links})
         }
     }
 
 
     onClicked: {
+        mainView.mode = "view"
         mainView.id = _id
         mainView.title = _title
         mainView.body = _body

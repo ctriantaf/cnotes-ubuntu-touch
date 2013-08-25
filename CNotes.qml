@@ -38,6 +38,9 @@ MainView {
     property string position
     property string filter
     property string archive
+    property string mode
+    property string link
+    property string imageLocation
 
     property variant notes
     property variant categoriesModel
@@ -46,6 +49,7 @@ MainView {
     property variant archiveNotes
     property variant allNotes
     property variant noteLinksModel
+    property variant imagesModel
 
     property string focusedEntry: ""
 
@@ -62,6 +66,8 @@ MainView {
     filterNotesModel: ListModel {}
 
     noteLinksModel: ListModel {}
+
+    imagesModel: ListModel {}
 
     ListModel { id: noteTagsModel }
 
@@ -115,23 +121,34 @@ MainView {
         return converter.makeHtml(text)
     }
 
-    function getLinksArray() {
-        if (noteLinksModel.length === 0) {
-            return []
+//    function getLinksArray() {
+//        if (noteLinksModel.length === 0) {
+//            return []
+//        }
+
+//        var res = new Array()
+//        for (var i = 0; i < noteLinksModel.length; i++) {
+//            res[i] = noteLinksModel[i]
+//        }
+//        return res
+//    }
+
+    function getLinksForStorage() {
+        var res = ""
+        if (noteLinksModel.count  > 0) {
+            res = noteLinksModel.get(0).link
+            for (var i = 1; i < noteLinksModel.count; i++) {
+                res = res + "," + noteLinksModel.get(i).link
+            }
         }
 
-        var res = new Array()
-        for (var i = 0; i < noteLinksModel.length; i++) {
-            print (noteLinksModel[i])
-            res[i] = noteLinksModel[i]
-        }
         return res
     }
 
     PageStack {
         id: pageStack
         Component.onCompleted: {
-//            Storage.deleteDatabase()
+            Storage.deleteDatabase()
             Storage.initialize()
             loadNotes()
             loadArchiveNotes()
@@ -140,65 +157,68 @@ MainView {
 //            categoriesModel.append({categoryName: "None"})
 //            categoriesModel.append({categoryName: "Things to do"})
 //            categoriesModel.append({categoryName: "Work"})
-//            Storage.addCategory("None")
-//            Storage.addCategory("Things to do")
-//            Storage.addCategory("Work")
+            Storage.addCategory("None")
+            Storage.addCategory("Things to do")
+            Storage.addCategory("Work")
 
-//            pageStack.push(Qt.resolvedUrl("MainPage.qml"))
-            pageStack.push(mainConditionalPage)
+            pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+
+//            pageStack.push(mainConditionalPage)
 
 //            u1Backend.setNote("a", "hello", "world", "a", "work", "false", "main")
         }
 
-        Page {
-            id: mainConditionalPage
+//        Page {
+//            id: mainConditionalPage
 
-            Layouts {
-                anchors.fill: parent
-                layouts: [
-                    ConditionalLayout {
-                        name:  "tabletMainView"
-                        when: mainView.width >= units.gu(80)
+//            Layouts {
+//                anchors.fill: parent
+//                layouts: [
+//                    ConditionalLayout {
+//                        name:  "tabletMainView"
+//                        when: mainView.width >= units.gu(80)
 
-                        Row {
-                            anchors.fill: parent
-                            spacing: units.gu(2)
+//                        Row {
+//                            anchors.fill: parent
+//                            spacing: units.gu(2)
 
-                            ItemLayout {
-                                item: "notesSidebar"
-                                width: parent.width / 3
-                                height: parent.height
-                            }
+//                            ItemLayout {
+//                                item: "notesSidebar"
+//                                width: parent.width / 3
+//                                height: parent.height
+//                            }
 
-                            ItemLayout {
-                                item: "noteView"
-                                width: parent.width * 2 / 3
-                                height: parent.height
-                            }
-                        }
-                    },
+//                            ItemLayout {
+//                                item: "noteView"
+//                                width: parent.width * 2 / 3
+//                                height: parent.height
+//                            }
+//                        }
+//                    },
 
-                    ConditionalLayout {
-                        name: "phoneMainView"
-                        when: mainView.width < units.gu(80)
+//                    ConditionalLayout {
+//                        name: "phoneMainView"
+//                        when: mainView.width < units.gu(80)
 
-                        ItemLayout {
-                            item: "notesSidebar"
-                            anchors.fill: parent
-                        }
-                    }
+//                        ItemLayout {
+//                            item: "notesSidebar"
+//                            anchors.fill: parent
+//                        }
+//                    }
 
-                ]
+//                ]
 
-                MainPage {
-                    Layouts.item: "notesSidebar"
-                }
+//                MainPage {
+//                    id: mainPage
+//                    Layouts.item: "notesSidebar"
+//                }
 
-                NoteView {
-                    Layouts.item: "noteView"
-                }
-            }
-        }
+//                NoteView {
+//                    id: noteView
+//                    Layouts.item: "noteView"
+//                }
+//            }
+//        }
 
         Component {
             id: tagsComponent
@@ -299,196 +319,6 @@ MainView {
                                 }
                             }
                         }
-                    }
-                }
-            }
-        }
-
-        Component {
-            id: categoryComponent
-            // FIXME make popover filled with a ListModel categories
-
-            Popover {
-                id: categoryPopover
-
-                Column {
-
-                    anchors {
-                        top: parent.top
-                        left: parent.left
-                        right: parent.right
-                    }
-
-                    ListView {
-                        id: categoriesPopoverView
-                        model: categoriesModel
-                        delegate: ListItem.Empty {
-                            Label {
-                                id: categoryLabel
-                                anchors {
-                                    verticalCenter: parent.verticalCenter
-                                    left: parent.left
-                                    margins: units.gu(2)
-                                }
-
-                                text: categoryName
-                                fontSize: "medium"
-                                color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
-                            }
-
-                            onClicked: {
-                                categoryName = categoryLabel.text
-                            }
-                        }
-                    }
-
-                    ListItem.Empty {
-                        id: newCategoryLabel
-                        Label {
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                                left: parent.left
-                                margins: units.gu(2)
-                            }
-
-                            text: i18n.tr("Create category")
-                            fontSize: "medium"
-                            color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
-                        }
-
-                        onClicked: {
-                            newCategoryItem.visible = true
-                            newCategoryLabel.visible = false
-                        }
-                    }
-
-                    ListItem.Empty {
-                        id: newCategoryItem
-                        visible: false
-                        width: parent.width
-
-                        Row {
-                            spacing: units.gu(1)
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                                horizontalCenter: parent.horizontalCenter
-                            }
-
-                            TextField {
-                                id: newCategoryField
-                                anchors {
-                                    verticalCenter: parent.verticalCenter
-                                    topMargin: units.gu(1)
-                                }
-                                width: parent.width * 2 / 3
-                                placeholderText: i18n.tr("Category name")
-                            }
-
-                            Button {
-                                anchors {
-                                    verticalCenter: parent.verticalCenter
-                                }
-                                height: newCategoryField.height
-                                text: i18n.tr("Create")
-                                onClicked: {
-                                    categoriesModel.append({categoryName: newCategoryField.text})
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Component {
-            id: cameraComponent
-
-            Dialog {
-                id: cameraDialog
-                title: i18n.tr("Take a photo")
-
-                property string path: "./pictures/" + mainView.id + "/"
-                property string location
-
-                Camera {
-                    id: camera
-                    imageCapture {
-                        onImageCaptured: photoPreview.source = preview
-                    }
-                }
-
-                VideoOutput {
-                    source: camera
-                    focus: visible
-                    height: units.gu(20)
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            if (imageTitle.text.length == 0) {
-                                imageTitle.focus = true
-                                return
-                            }
-
-                            print(path)
-                            camera.imageCapture.captureToLocation(path + imageTitle.text)
-                        }
-                    }
-                }
-
-                Image {
-                    id: photoPreview
-                    height: units.gu(20)
-                }
-
-                TextField {
-                    id: imageTitle
-                    placeholderText: i18n.tr("Give title")
-                }
-
-                Row {
-                    spacing: units.gu(1)
-                    Button {
-                        text: i18n.tr("Close")
-                        width: parent.width / 2
-                        color: "#A55263"
-                        onClicked: PopupUtils.close(cameraDialog)
-                    }
-
-                    Button {
-                        text: i18n.tr("Add")
-                        width: parent.width / 2
-                        color: "#A55263"
-//                        onClicked:
-                    }
-                }
-            }
-        }
-
-        Component {
-            id: linkComponent
-
-            Dialog {
-                id: linkDialog
-                title: i18n.tr("Enter link")
-
-                property string mode
-
-                TextField {
-                    id: linkTextField
-                }
-
-                Button {
-                    text: i18n.tr("Enter")
-                    color: "#A55263"
-
-                    onClicked: {
-                        var link = "<link href='" + linkTextField.text + "'>"
-                        print (link)
-                        noteLinksModel.append({'link': link})
-//                        linksSelector.visible = true
-                        CreateNotePage.refreshLinksInCreate()
-                        PopupUtils.close(linkDialog)
                     }
                 }
             }

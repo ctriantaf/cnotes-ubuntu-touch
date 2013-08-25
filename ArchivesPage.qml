@@ -9,6 +9,20 @@ Page {
     id: archivePage
     title: i18n.tr("Archives")
 
+    tools: ToolbarItems {
+        ToolbarButton {
+            action: Action {
+                id: deleteArchiveAction
+                objectName: "deleteArchiveAction"
+
+                text: i18n.tr("Remove all")
+                iconSource: Qt.resolvedUrl("images/close.svg")
+
+                onTriggered: deleteArchive()
+            }
+        }
+    }
+
     property string pos
 
     ListView {
@@ -71,5 +85,12 @@ Page {
                 }
             }
         }
+    }
+
+    function deleteArchive() {
+        for (var i = 0; i < archivesModel.count; i++) {
+            Storage.removeNote(archivesModel.get(i).id)
+        }
+        archivesModel.clear()
     }
 }
