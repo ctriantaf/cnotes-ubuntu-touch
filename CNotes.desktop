@@ -2,7 +2,7 @@
 Name=CNotes
 Comment=My project description
 Exec=/usr/bin/qmlscene $@ /usr/share/CNotes/CNotes.qml
-Icon=qmlscene
+Icon=./CNotes.png
 Terminal=false
 Type=Application
 X-Ubuntu-Touch=true

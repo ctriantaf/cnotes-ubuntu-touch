@@ -6,8 +6,13 @@ import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
 import Ubuntu.Layouts 0.1
 import U1db 1.0 as U1db
+import DirParser 1.0
 import "Storage.js" as Storage
 import "showdown.js" as Showdown
+import "components"
+import "view"
+import "pages"
+
 
 MainView {
     id: mainView
@@ -38,6 +43,7 @@ MainView {
     property string category : "None"
     property string tag : "None"
     property string position
+    property string archivePos
     property string filter
     property string archive
     property string mode
@@ -59,7 +65,13 @@ MainView {
 //        id: u1Backend
 //    }
 
-    notes: ListModel {}
+    DirParser {
+        id: dirParser
+    }
+
+    notes: ListModel {
+        onCountChanged: notesListView.currentIndex = count - 1
+    }
 
     categoriesModel: ListModel {}
 
@@ -122,18 +134,6 @@ MainView {
         return converter.makeHtml(text)
     }
 
-//    function getLinksArray() {
-//        if (noteLinksModel.length === 0) {
-//            return []
-//        }
-
-//        var res = new Array()
-//        for (var i = 0; i < noteLinksModel.length; i++) {
-//            res[i] = noteLinksModel[i]
-//        }
-//        return res
-//    }
-
     function getLinksForStorage() {
         var res = ""
         if (noteLinksModel.count  > 0) {
@@ -148,7 +148,11 @@ MainView {
 
     PageStack {
         id: rootPageStack
+
         Component.onCompleted: {
+
+
+
             Storage.deleteDatabase()
             Storage.initialize()
             loadNotes()
@@ -180,6 +184,8 @@ MainView {
             visible: false
             title: "CNotes"
 
+            tools: MainToolbar {}
+
             Layouts {
                 anchors.fill: parent
                 layouts: [
@@ -191,19 +197,37 @@ MainView {
                             anchors.fill: parent
                             spacing: units.gu(2)
 
-                            ItemLayout {
-                                item: "notesSidebar"
+                            Row {
+                                id: row
+//                                anchors.left: parent.left
                                 width: parent.width / 3
                                 height: parent.height
+
+                                ItemLayout {
+                                    id: itemL
+                                    item: "notesSidebar"
+//                                    anchors.left: parent.left
+                                    height: parent.height
+                                    width: parent.width
+                                }
+
+                                ItemLayout {
+                                    item: "archiveSidebar"
+//                                    anchors.top: parent.top
+                                    height: parent.height
+                                    width: parent.width
+//                                    visible: !itemL.visible
+                                }
                             }
 
                             ItemLayout {
                                 item: "noteView"
+//                                anchors.left: col.right
                                 width: parent.width * 2 / 3
                                 height: parent.height
                             }
                         }
-                    }/*,
+                    },
 
                     ConditionalLayout {
                         name: "phoneMainView"
@@ -213,7 +237,7 @@ MainView {
                             item: "notesSidebar"
                             anchors.fill: parent
                         }
-                    }*/
+                    }
 
                 ]
 
@@ -221,14 +245,33 @@ MainView {
                     id: notesListView
                     width: parent.width / 3
                     Layouts.item: "notesSidebar"
+
+                    onCurrentIndexChanged: {
+                        mainView.title = notes.get(currentIndex).title
+                        mainView.body = notes.get(currentIndex).body
+                        mainView.category = notes.get(currentIndex).category
+                        mainView.tag = notes.get(currentIndex).tag
+                        mainView.archive = notes.get(currentIndex).archive
+//                        noteView.update()
+//                        noteViewRow.noteBodyTextArea.text = mainView.title
+                        print (mainView.body)
+                    }
                 }
 
-                NoteView {
-                    id: noteView
+                ArchiveListView {
+                    id: archiveListView
+                    width: parent.width / 3
+                    Layouts.item: "archiveSidebar"
+                    visible: false
+
+                    Component.onCompleted: archivesModel.append({'title':"a", 'body': 'ss'})
+                }
+
+                NoteViewRow {
+                    id: noteViewRow
                     Layouts.item: "noteView"
-//                    visible: notes.count > 0 ? true : false
+                    visible: notes.count > 0 ? true : false
                     width: parent.width * 2 / 3
-                    visible: true
                 }
             }
         }

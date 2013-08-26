@@ -24,7 +24,7 @@ Tab {
                     objectName: "cameraAction"
 
                     text: i18n.tr("Camera")
-                    iconSource: Qt.resolvedUrl("images/camcorder.svg")
+                    iconSource: Qt.resolvedUrl("../images/camcorder.svg")
 
                     onTriggered: {
                         mainView.id = idCount
@@ -59,7 +59,7 @@ Tab {
             id: cameraDialog
             title: i18n.tr("Take a photo")
 
-            property string path: "./pictures/" + mainView.id + "/"
+            property string path: "../pictures/" + mainView.id + "/"
             property string location
 
             Camera {
@@ -82,7 +82,11 @@ Tab {
                             return
                         }
 
-                        print(path)
+                        if (!mainView.dirParser.dirExists(path)) {
+                            mainView.dirParser.createDirectory(path)
+                        }
+
+                        print(path + imageTitle.text)
                         camera.imageCapture.captureToLocation(path + imageTitle.text)
                     }
                 }

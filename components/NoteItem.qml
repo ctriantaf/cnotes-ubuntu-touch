@@ -3,7 +3,7 @@ import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1
 import Ubuntu.Components.Popups 0.1
-import "Storage.js" as Storage
+import "../Storage.js" as Storage
 
 Subtitled {
 
@@ -61,6 +61,9 @@ Subtitled {
         mainView.position = model.index
         mainView.archive = _archive
 
-        pageStack.push (Qt.resolvedUrl("NoteView.qml"))
+        if (mainView.wideAspect)
+            return
+
+        pageStack.push (Qt.resolvedUrl("../pages/NoteView.qml"))
     }
 }

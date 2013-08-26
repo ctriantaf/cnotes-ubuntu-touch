@@ -26,7 +26,7 @@ Tab {
                 objectName: "addLinkbutton"
 
                 text: i18n.tr("Link")
-                iconSource: Qt.resolvedUrl("images/add.svg")
+                iconSource: Qt.resolvedUrl("../images/add.svg")
 
                 onTriggered: {mainView.mode = "add"; PopupUtils.open(linkComponent)}
             }
@@ -43,7 +43,7 @@ Tab {
                 text: link
 
                 //FIXME add url on browser
-//                onClicked: Qt.openUrlExternally(link)
+                onClicked: Qt.openLinkExternally(link)
 
                 onPressAndHold: PopupUtils.open(linkPopoverComponent)
             }
