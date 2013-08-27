@@ -3,7 +3,8 @@ import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
 import QtQuick.LocalStorage 2.0
-import "Storage.js" as Storage
+import "../Storage.js" as Storage
+import "../components"
 
 Tabs {
     Tab {
@@ -22,7 +23,7 @@ Tabs {
                         objectName: "editDoneAction"
 
                         text: i18n.tr("Apply")
-                        iconSource: Qt.resolvedUrl("images/select.svg")
+                        iconSource: Qt.resolvedUrl("../images/select.svg")
 
                         onTriggered: {
                             Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex], tag, 'false', 'main')
@@ -32,7 +33,7 @@ Tabs {
                             mainView.notes.get(mainView.position).tag = tag
 
                             mainView.tag = tag
-                            pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+                            pageStack.push(Qt.resolvedUrl("../pages/MainPage.qml"))
                         }
                     }
                 }
@@ -49,13 +50,14 @@ Tabs {
                 TextField {
                     id: inputTitleEdit
                     width: parent.width
-                    text: mainView.title
+                    text: title
                     placeholderText: i18n.tr("Title")
                 }
 
                 TextArea {
+                    Component.onCompleted: {print(mainView.body); print(body)}
                     id: inputBodyEdit
-                    text: mainView.body
+                    text: body
                     height: units.gu(10)
                     width: parent.width
                     placeholderText: i18n.tr("Body")
@@ -79,14 +81,14 @@ Tabs {
                     expanded: false
                     values: categories
                     selectedIndex: getCategoryIndex(mainView.category)
-                }
-            }
 
-            function getCategoryIndex(name) {
-                var cat = Storage.fetchAllCategories()
-                for (var i = 0; i < cat.length; i++) {
-                    if (cat[i] === name) {
-                        return i
+                    function getCategoryIndex(name) {
+                        var cat = Storage.fetchAllCategories()
+                        for (var i = 0; i < cat.length; i++) {
+                            if (cat[i] === name) {
+                                return i
+                            }
+                        }
                     }
                 }
             }

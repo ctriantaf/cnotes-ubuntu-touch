@@ -15,6 +15,8 @@ Tabs {
             id: createNotePage
             title: i18n.tr("Create note")
 
+            Component.onCompleted: mainView.id=idCount
+
             tools: ToolbarItems {
                 id: createNoteToolbar
                 opened: true
@@ -25,7 +27,7 @@ Tabs {
                         id: createNoteAction
                         objectName: "createNoteAction"
 
-                        text: i18n.tr("Create")
+                        text: i18n.tr("Save")
                         iconSource: Qt.resolvedUrl("../images/add.svg")
 
                         onTriggered: {
@@ -45,16 +47,10 @@ Tabs {
                             inputBody.text = ""
 
                             if (mainView.wideAspect) {
-//                                notesListView.selectedIndex = mainView.notes.count
-                                mainView.title = inputTitle.text
-                                mainView.body = inputBody.text
-                                mainView.category = categoriesSelector.values[categoriesSelector.selectedIndex]
-                                mainView.tag = tag
-
                                 rootPageStack.push(mainConditionalPage)
-
                             }
                             else {
+                                print("Clear")
                                 mainView.title = ""
                                 mainView.body = ""
                                 mainView.category = i18n.tr("None")

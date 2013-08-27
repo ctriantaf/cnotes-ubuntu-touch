@@ -3,10 +3,21 @@ import QtMultimedia 5.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.Popups 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
+import DirParser 1.0
 
 Tab {
     title: i18n.tr("Images")
     page: Page {
+
+        Component.onCompleted: {
+            if (mainView.mode === "edit") {
+                loadImages()
+            }
+        }
+
+        function loadImages() {
+            print(dirParser.fetchAllFiles("./pictures/" + mainView.id + '/'))
+        }
 
         tools: ToolbarItems {
             opened: true
@@ -43,13 +54,21 @@ Tab {
 
             model: mainView.imagesModel
             delegate: MouseArea {
+                width: units.gu(20)
+                height: units.gu(20)
+
                 Image {
+                    anchors.fill: parent
                     source: location
                 }
 
-                onClicked: {mainView.imageLocation=location; PopupUtils.open(imageViewerComponent)}
+//                onClicked: {mainView.imageLocation=location; PopupUtils.open(imageViewerComponent)}
             }
         }
+    }
+
+    DirParser {
+        id: dirParser
     }
 
     Component {
@@ -59,8 +78,9 @@ Tab {
             id: cameraDialog
             title: i18n.tr("Take a photo")
 
-            property string path: "../pictures/" + mainView.id + "/"
+            property string path: './pictures/' + mainView.id + '/'
             property string location
+            Component.onCompleted: print(path)
 
             Camera {
                 id: camera
@@ -82,12 +102,12 @@ Tab {
                             return
                         }
 
-                        if (!mainView.dirParser.dirExists(path)) {
-                            mainView.dirParser.createDirectory(path)
+                        if (!dirParser.dirExists(path)) {
+                            dirParser.createDirectory(path)
                         }
 
-                        print(path + imageTitle.text)
                         camera.imageCapture.captureToLocation(path + imageTitle.text)
+                        location = '../pictures/' + mainView.id + '/' + imageTitle.text
                     }
                 }
             }
@@ -115,28 +135,34 @@ Tab {
                     text: i18n.tr("Add")
                     width: parent.width / 2
                     color: "#A55263"
-//                        onClicked:
+
+                    onClicked: {
+                        mainView.imagesModel.append({'location': location, 'imgTitle': imageTitle.text})
+                        print(imagesView.model.count)
+                        PopupUtils.close(cameraDialog)
+                    }
                 }
             }
         }
     }
 
-    Component {
-        id: imageViewerComponent
+//    Component {
+//        id: imageViewerComponent
 
-        Dialog {
-            id: imageViewerDialog
+//        Dialog {
+//            id: imageViewerDialog
+//            width: parent.width
 
-            MouseArea {
-                anchors.fill: parent
+//            MouseArea {
+//                anchors.fill: parent
 
-                Image {
-                    source: mainView.imageLocation
-                    anchors.fill: parent
-                }
+//                Image {
+//                    source: location
+//                    anchors.fill: parent
+//                }
 
-                onClicked: PopupUtils.close(imageViewerDialog)
-            }
-        }
-    }
+//                onClicked: PopupUtils.close(imageViewerDialog)
+//            }
+//        }
+//    }
 }

@@ -35,6 +35,7 @@ MainView {
     footerColor: "#D75669"
 
     property bool wideAspect: width > units.gu(80)
+    property int condWidth: width / 3
 
     property string idCount : "0"
     property string id
@@ -61,14 +62,6 @@ MainView {
 
     property string focusedEntry: ""
 
-//    U1Backend {
-//        id: u1Backend
-//    }
-
-    DirParser {
-        id: dirParser
-    }
-
     notes: ListModel {
         onCountChanged: notesListView.currentIndex = count - 1
     }
@@ -88,6 +81,15 @@ MainView {
     ListModel {
         // Here are stored the three last used tags (for the gridView)
         id: tagsModel
+    }
+
+    onTagChanged: {
+        if (wideAspect) {
+            noteTagsModel.clear()
+            for (var i = 0; i < mainView.tag.split(",").length; i++) {
+                noteTagsModel.append({tag: mainView.tag.split(",")[i]})
+            }
+        }
     }
 
     function loadNotes() {
@@ -151,8 +153,6 @@ MainView {
 
         Component.onCompleted: {
 
-
-
             Storage.deleteDatabase()
             Storage.initialize()
             loadNotes()
@@ -166,15 +166,7 @@ MainView {
             Storage.addCategory("Things to do")
             Storage.addCategory("Work")
 
-//            if (wideAspect) {
-//                rootPageStack.push(Qt.resolvedUrl("TabletView.qml"))
-//            }
-//            else {
-//                rootPageStack.push(Qt.resolvedUrl("MainPage.qml"))
-//            }
-
             rootPageStack.push(mainConditionalPage)
-//            pageStack.push(mainConditionalPage)
 
 //            u1Backend.setNote("a", "hello", "world", "a", "work", "false", "main")
         }
@@ -195,34 +187,18 @@ MainView {
 
                         Row {
                             anchors.fill: parent
-                            spacing: units.gu(2)
+//                            spacing: units.gu(2)
 
-                            Row {
-                                id: row
-//                                anchors.left: parent.left
+                            ItemLayout {
+                                id: itemL
+                                item: "notesSidebar"
                                 width: parent.width / 3
                                 height: parent.height
-
-                                ItemLayout {
-                                    id: itemL
-                                    item: "notesSidebar"
-//                                    anchors.left: parent.left
-                                    height: parent.height
-                                    width: parent.width
-                                }
-
-                                ItemLayout {
-                                    item: "archiveSidebar"
-//                                    anchors.top: parent.top
-                                    height: parent.height
-                                    width: parent.width
-//                                    visible: !itemL.visible
-                                }
                             }
 
                             ItemLayout {
+                                id: item
                                 item: "noteView"
-//                                anchors.left: col.right
                                 width: parent.width * 2 / 3
                                 height: parent.height
                             }
@@ -243,7 +219,6 @@ MainView {
 
                 NotesListView {
                     id: notesListView
-                    width: parent.width / 3
                     Layouts.item: "notesSidebar"
 
                     onCurrentIndexChanged: {
@@ -252,26 +227,16 @@ MainView {
                         mainView.category = notes.get(currentIndex).category
                         mainView.tag = notes.get(currentIndex).tag
                         mainView.archive = notes.get(currentIndex).archive
-//                        noteView.update()
-//                        noteViewRow.noteBodyTextArea.text = mainView.title
-                        print (mainView.body)
+
+                        noteViewRow.visible = true
+                        noteViewRow.body = mainView.body
                     }
-                }
-
-                ArchiveListView {
-                    id: archiveListView
-                    width: parent.width / 3
-                    Layouts.item: "archiveSidebar"
-                    visible: false
-
-                    Component.onCompleted: archivesModel.append({'title':"a", 'body': 'ss'})
                 }
 
                 NoteViewRow {
                     id: noteViewRow
                     Layouts.item: "noteView"
-                    visible: notes.count > 0 ? true : false
-                    width: parent.width * 2 / 3
+                    visible: false
                 }
             }
         }

@@ -7,7 +7,7 @@ import "../"
 
 Row {
     id: notesViewRow
-//    property TextArea noteBodyTextArea
+    property string body: mainView.body
 
     Column {
         id: bodyColumn
@@ -21,7 +21,7 @@ Row {
             activeFocusOnPress: false
             height: parent.height - header.height - noteCategoryLabel.height - units.gu(2)
             width: parent.width
-            text: getHtmlText(mainView.body)
+            text: getHtmlText(body)
             textFormat: TextEdit.RichText
             color: "#A55263"
 

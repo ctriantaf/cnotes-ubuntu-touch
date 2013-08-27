@@ -7,8 +7,15 @@ Tab {
     title: i18n.tr("Links")
     page: Page {
         Component.onCompleted: {
-            mainView.noteLinksModel.clear()
-//            loadLinks()
+            if (mainView.mode === "edit") {loadLinks()}
+        }
+
+        function loadLinks() {
+            linksListView.model.clear()
+            var links = Storage.getLinks(mainView.id)
+            for (var i = 0; i < links.split(",").length; i++) {
+                linksListView.model.append({'link': links.split(",")[i]})
+            }
         }
 
         tools: ToolbarItems {
@@ -43,7 +50,7 @@ Tab {
                 text: link
 
                 //FIXME add url on browser
-                onClicked: Qt.openLinkExternally(link)
+                onClicked: Qt.openUrlExternally(link)
 
                 onPressAndHold: PopupUtils.open(linkPopoverComponent)
             }

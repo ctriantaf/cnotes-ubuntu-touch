@@ -1,17 +1,15 @@
 import QtQuick 2.0
 import "../components"
+import "../pages"
 
 ListView {
     id: notesView
     anchors {
         fill: parent
-        leftMargin: units.gu(2)
-        rightMargin: units.gu(2)
+        margins: units.gu(2)
     }
 
-    spacing: 2
     model: mainView.notes
-
     delegate: NoteItem {
         _id: id
         _title: title
@@ -23,6 +21,11 @@ ListView {
 
         _tag: tag
         _category: category
+        _archive: archive
         _view: view
+
+        onPressAndHold: {
+            PopupUtils.open(archiveRemoveComponent, null)
+        }
     }
 }

@@ -22,7 +22,7 @@ ToolbarItems {
                 iconSource: Qt.resolvedUrl("../images/edit.svg")
                 text: i18n.tr("Edit")
 
-//                    onTriggered: mainView.
+                onTriggered: rootPageStack.push(Qt.resolvedUrl("../pages/EditNotePage.qml"))
             }
 
             visible: {
@@ -42,14 +42,12 @@ ToolbarItems {
                 text: i18n.tr("Archive")
 
                 onTriggered: {
-                    if (mainView.wideAspect) {
-                        notesListView.visible = false
-                        archiveListView.visible = true
-                    }
-                    else {
-                        print ('a')
-                        rootPageStack.push(Qt.resolvedUrl("ArchivesPage.qml"))
-                    }
+                    notesListView.model = archivesModel
+                    notesListView.update()
+
+//                    if (!mainView.wideAspect) {
+//                        rootPageStack.push(Qt.resolvedUrl("ArchivesPage.qml"))
+//                    }
                 }
             }
         }
@@ -63,7 +61,7 @@ ToolbarItems {
                 text: i18n.tr("Categories")
 
                 onTriggered: {
-                    pageStack.push(Qt.resolvedUrl("CategoriesPage.qml"))
+                    pageStack.push(Qt.resolvedUrl("../pages/CategoriesPage.qml"))
                 }
             }
         }

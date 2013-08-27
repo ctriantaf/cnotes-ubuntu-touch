@@ -24,6 +24,7 @@ ListView {
         _tag: tag
         _category: category
         _archive: archive
+        _view: view
 
         onPressAndHold: {
             PopupUtils.open(archiveRemoveComponent, null)
