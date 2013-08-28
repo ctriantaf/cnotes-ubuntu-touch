@@ -6,6 +6,9 @@ import Ubuntu.Components.Popups 0.1
 import "../Storage.js" as Storage
 import "../view"
 
+
+// TODO when archive action is clicked just replace model, don't switch pages
+
 Page {
     id: archivePage
     title: i18n.tr("Archives")
@@ -28,45 +31,4 @@ Page {
         id: archiveListView
     }
 
-    property string pos
-
-    Component {
-        id: archiveRemoveComponent
-
-        Popover {
-            id: archiveRemovePopover
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
-
-            ListItem.Empty {
-                Label {
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                        left: parent.left
-                        margins: units.gu(2)
-                    }
-
-                    text: i18n.tr("Remove")
-                    fontSize: "medium"
-                    color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
-                }
-
-                onClicked: {
-                    Storage.removeNote(archivesModel.get(mainView.archivePos).id)
-                    archivesModel.remove(mainView.archivePos)
-                    PopupUtils.close(archiveRemovePopover)
-                }
-            }
-        }
-    }
-
-    function deleteArchive() {
-        for (var i = 0; i < archivesModel.count; i++) {
-            Storage.removeNote(archivesModel.get(i).id)
-        }
-        archivesModel.clear()
-    }
 }

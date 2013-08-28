@@ -55,7 +55,6 @@ Tabs {
                 }
 
                 TextArea {
-                    Component.onCompleted: {print(mainView.body); print(body)}
                     id: inputBodyEdit
                     text: body
                     height: units.gu(10)

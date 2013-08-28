@@ -4,6 +4,7 @@ import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1
 import Ubuntu.Components.Popups 0.1
 import "../Storage.js" as Storage
+import "../view"
 
 Subtitled {
 
@@ -64,6 +65,6 @@ Subtitled {
         if (mainView.wideAspect)
             return
 
-        pageStack.push (Qt.resolvedUrl("../pages/NoteView.qml"))
+        pageStack.push (Qt.resolvedUrl("../view/NoteView.qml"))
     }
 }

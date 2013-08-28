@@ -50,7 +50,7 @@ Tab {
                 text: link
 
                 //FIXME add url on browser
-                onClicked: Qt.openUrlExternally(link)
+//                onClicked: Qt.openUrlExternally(link)
 
                 onPressAndHold: PopupUtils.open(linkPopoverComponent)
             }
@@ -92,7 +92,14 @@ Tab {
                 color: "#A55263"
 
                 onClicked:{
-                    mainView.noteLinksModel.append({'link': linkTextField.text})
+
+                    if (mainView.mode === 'add') {
+                        mainView.noteLinksModel.append({'link': linkTextField.text})
+                    }
+                    else {
+                        mainView.noteLinksModel.get(linksListView.currentIndex).link = linkTextField.text
+                    }
+
                     PopupUtils.close(linkDialog)
                 }
             }
@@ -104,44 +111,47 @@ Tab {
 
         Popover {
             id: linkPopover
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
 
-            ListItem.Standard {
-                //FIXME: Hack because of Suru theme!
-                Label {
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                        left: parent.left
-                        margins: units.gu(2)
-                    }
-
-                    text: i18n.tr("Edit")
-                    fontSize: "medium"
-                    color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+            Column {
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
                 }
 
-                onClicked: {mainView.mode = "edit"; PopupUtils.open(linkComponent)}
-            }
+                ListItem.Standard {
+                    //FIXME: Hack because of Suru theme!
+                    Label {
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            left: parent.left
+                            margins: units.gu(2)
+                        }
 
-            ListItem.Standard {
-                //FIXME: Hack because of Suru theme!
-                Label {
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                        left: parent.left
-                        margins: units.gu(2)
+                        text: i18n.tr("Edit")
+                        fontSize: "medium"
+                        color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
                     }
 
-                    text: i18n.tr("Remove")
-                    fontSize: "medium"
-                    color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+                    onClicked: {mainView.mode = "edit"; PopupUtils.open(linkComponent)}
                 }
 
-                onClicked: {mainView.noteLinksModel.remove(linksListView.currentIndex); PopupUtils.close(linkPopover)}
+                ListItem.Standard {
+                    //FIXME: Hack because of Suru theme!
+                    Label {
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            left: parent.left
+                            margins: units.gu(2)
+                        }
+
+                        text: i18n.tr("Remove")
+                        fontSize: "medium"
+                        color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+                    }
+
+                    onClicked: {mainView.noteLinksModel.remove(linksListView.currentIndex); PopupUtils.close(linkPopover)}
+                }
             }
         }
     }

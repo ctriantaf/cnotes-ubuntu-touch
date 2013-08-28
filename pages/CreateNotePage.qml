@@ -50,7 +50,6 @@ Tabs {
                                 rootPageStack.push(mainConditionalPage)
                             }
                             else {
-                                print("Clear")
                                 mainView.title = ""
                                 mainView.body = ""
                                 mainView.category = i18n.tr("None")

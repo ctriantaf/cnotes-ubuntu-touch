@@ -35,7 +35,6 @@ MainView {
     footerColor: "#D75669"
 
     property bool wideAspect: width > units.gu(80)
-    property int condWidth: width / 3
 
     property string idCount : "0"
     property string id
@@ -148,6 +147,13 @@ MainView {
         return res
     }
 
+    function deleteArchive() {
+        for (var i = 0; i < archivesModel.count; i++) {
+            Storage.removeNote(archivesModel.get(i).id)
+        }
+        archivesModel.clear()
+    }
+
     PageStack {
         id: rootPageStack
 
@@ -222,14 +228,21 @@ MainView {
                     Layouts.item: "notesSidebar"
 
                     onCurrentIndexChanged: {
+                        if (notesListView.model.count === 0 && wideAspect) {
+                            noteViewRow.visible = false
+                            return
+                        }
+
                         mainView.title = notes.get(currentIndex).title
                         mainView.body = notes.get(currentIndex).body
                         mainView.category = notes.get(currentIndex).category
                         mainView.tag = notes.get(currentIndex).tag
                         mainView.archive = notes.get(currentIndex).archive
 
-                        noteViewRow.visible = true
-                        noteViewRow.body = mainView.body
+                        if (wideAspect) {
+                            noteViewRow.body = mainView.body
+                            noteViewRow.visible = true
+                        }
                     }
                 }
 

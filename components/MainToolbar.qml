@@ -26,7 +26,45 @@ ToolbarItems {
             }
 
             visible: {
-                if (mainView.wideAspect) {
+                if (mainView.wideAspect && mainView.notes.count > 0) {
+                    return true
+                }
+                return false
+            }
+        }
+
+        ToolbarButton {
+            action: Action {
+                id: imagesViewAction
+                objectName: "imagesViewAction"
+
+                iconSource: Qt.resolvedUrl("../images/browser-tabs.svg")
+                text: i18n.tr("Images")
+
+                onTriggered: rootPageStack.push(Qt.resolvedUrl("../components/ImagesTab.qml"))
+            }
+
+            visible: {
+                if (mainView.wideAspect && mainView.notes.count > 0) {
+                    return true
+                }
+                return false
+            }
+        }
+
+        ToolbarButton {
+            action: Action {
+                id: linksViewAction
+                objectName: "linksViewAction"
+
+                iconSource: Qt.resolvedUrl("../images/browser-tabs.svg")
+                text: i18n.tr("Links")
+
+                onTriggered: rootPageStack.push(Qt.resolvedUrl("../components/LinksTab.qml"))
+            }
+
+            visible: {
+                if (mainView.wideAspect && mainView.notes.count > 0) {
                     return true
                 }
                 return false
@@ -42,8 +80,19 @@ ToolbarItems {
                 text: i18n.tr("Archive")
 
                 onTriggered: {
-                    notesListView.model = archivesModel
-                    notesListView.update()
+
+                    if (text === i18n.tr("Archive")) {
+                        print('archive view')
+                        notesListView.model = archivesModel
+                        notesListView.update()
+                        text = i18n.tr("Notes")
+                    }
+                    else {
+                        print('note view')
+                        notesListView.model = notes
+                        notesListView.update()
+                        text = i18n.tr("Archive")
+                    }
 
 //                    if (!mainView.wideAspect) {
 //                        rootPageStack.push(Qt.resolvedUrl("ArchivesPage.qml"))

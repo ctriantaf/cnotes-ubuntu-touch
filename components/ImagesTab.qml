@@ -10,13 +10,13 @@ Tab {
     page: Page {
 
         Component.onCompleted: {
-            if (mainView.mode === "edit") {
-                loadImages()
+            imagesView.model.clear()
+            var loc = "./pictures/" + mainView.id + '/'
+            var imgs = dirParser.fetchAllFiles(loc)
+            for (var i = 0; i < imgs.length; i++) {
+                print(loc+imgs[i])
+                imagesView.model.append({'location': loc+imgs[i]})
             }
-        }
-
-        function loadImages() {
-            print(dirParser.fetchAllFiles("./pictures/" + mainView.id + '/'))
         }
 
         tools: ToolbarItems {
@@ -62,7 +62,7 @@ Tab {
                     source: location
                 }
 
-//                onClicked: {mainView.imageLocation=location; PopupUtils.open(imageViewerComponent)}
+                onPressAndHold: PopupUtils.open(imagePopoverComponent)
             }
         }
     }
@@ -80,7 +80,6 @@ Tab {
 
             property string path: './pictures/' + mainView.id + '/'
             property string location
-            Component.onCompleted: print(path)
 
             Camera {
                 id: camera
@@ -128,7 +127,12 @@ Tab {
                     text: i18n.tr("Close")
                     width: parent.width / 2
                     color: "#A55263"
-                    onClicked: PopupUtils.close(cameraDialog)
+                    onClicked: {
+                        var loc = imagesView.model.get(imagesView.currentIndex).location
+                        dirParser.remove(loc.substring(1))
+                        imagesView.model.remove(imagesView.currentIndex)
+                        PopupUtils.close(cameraDialog)
+                    }
                 }
 
                 Button {
@@ -146,23 +150,36 @@ Tab {
         }
     }
 
-//    Component {
-//        id: imageViewerComponent
+    Component {
+        id: imagePopoverComponent
+        Popover {
+            id: imagePopover
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+            }
 
-//        Dialog {
-//            id: imageViewerDialog
-//            width: parent.width
+            ListItem.Empty {
+                Label {
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        left: parent.left
+                        margins: units.gu(2)
+                    }
 
-//            MouseArea {
-//                anchors.fill: parent
+                    text: i18n.tr("Remove")
+                    fontSize: "medium"
+                    color: parent.selected ? UbuntuColors.orange : Theme.palette.normal.overlayText
+                }
 
-//                Image {
-//                    source: location
-//                    anchors.fill: parent
-//                }
-
-//                onClicked: PopupUtils.close(imageViewerDialog)
-//            }
-//        }
-//    }
+                onClicked: {
+                    var loc = imagesView.model.get(imagesView.currentIndex).location
+                    dirParser.remove(loc.substring(1))
+                    imagesView.model.remove(imagesView.currentIndex)
+                    PopupUtils.close(imagePopover)
+                }
+            }
+        }
+    }
 }
