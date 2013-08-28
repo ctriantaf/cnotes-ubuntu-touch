@@ -23,6 +23,18 @@ Subtitled {
         }
     }
 
+    visible: {
+        if (_archive === mainView.showArchive) {
+            print('Visible true')
+            print ('Count ' + notes.count)
+            return true
+        }
+        print('Visible false')
+        print ('Count ' + notes.count)
+        return false
+    }
+
+
     property string _id
     property string _title
     property string _body
@@ -40,14 +52,23 @@ Subtitled {
             _archive = 'true'
             _view = "archive"
             Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view, _links)
-            archivesModel.append({id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view, links:_links})
+//            archivesModel.append({id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view, links:_links})
+//            print(notes.count + ' - ' + notesListView.currentIndex)
+            notes.get(notesListView.currentIndex).archive = _archive
+            notes.get(notesListView.currentIndex).view = _view
+//            notesListView.update()
+//            notes.remove(notesListView.currentIndex)
         }
         else {
+            print(notes.count)
             _archive = 'false'
             _view = "main"
             Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view, _links)
-            archivesModel.remove(archivePage.pos)
-            notes.insert(_id, {id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view, links:_links})
+//            archivesModel.remove(notesListView.currentIndex)
+//            notes.insert(_id, {id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view, links:_links})
+            notes.get(notesListView.currentIndex).archive = _archive
+            notes.get(notesListView.currentIndex).view = _view
+//            notesListView.update()
         }
     }
 

@@ -83,14 +83,16 @@ ToolbarItems {
 
                     if (text === i18n.tr("Archive")) {
                         print('archive view')
-                        notesListView.model = archivesModel
-                        notesListView.update()
+//                        notesListView.model = archivesModel
+//                        notesListView.update()
+                        mainView.showArchive = 'true'
                         text = i18n.tr("Notes")
                     }
                     else {
                         print('note view')
-                        notesListView.model = notes
-                        notesListView.update()
+                        mainView.showArchive = 'false'
+//                        notesListView.model = notes
+//                        notesListView.update()
                         text = i18n.tr("Archive")
                     }
 

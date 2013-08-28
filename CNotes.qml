@@ -49,6 +49,7 @@ MainView {
     property string mode
     property string link
     property string imageLocation
+    property string showArchive: 'false'
 
     property variant notes
     property variant categoriesModel

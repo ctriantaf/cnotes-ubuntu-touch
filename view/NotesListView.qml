@@ -30,8 +30,6 @@ ListView {
         _archive: archive
         _view: view
 
-
-
         onPressAndHold: {
             PopupUtils.open(noteRemoveComponent)
         }
