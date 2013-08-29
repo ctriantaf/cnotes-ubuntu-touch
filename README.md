@@ -2,8 +2,10 @@
 To install CNotes you need first to compile dirParserPlugin.
 To do that ```cd``` into dirParserPlugin folder and run the following commands:
 ```
-$ qmake
+$ qmake dirParserPlugin.pro
 $ make
 ```
 
-After you are finished just run the app from QtCreator.
+### Run
+To run the app on the root folder run ```qmlscene -I dirParserPlugin/ CNotes.qml```
+
