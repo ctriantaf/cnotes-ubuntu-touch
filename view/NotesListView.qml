@@ -15,7 +15,7 @@ ListView {
         margins: units.gu(2)
     }
 
-    model: mainView.notes
+//    model: mainView.notes
     delegate: NoteItem {
         _id: id
         _title: title

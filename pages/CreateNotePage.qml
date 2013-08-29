@@ -46,17 +46,13 @@ Tabs {
                             inputTitle.text = ""
                             inputBody.text = ""
 
-                            if (mainView.wideAspect) {
-                                rootPageStack.push(mainConditionalPage)
-                            }
-                            else {
+                            if (!mainView.wideAspect) {
                                 mainView.title = ""
                                 mainView.body = ""
                                 mainView.category = i18n.tr("None")
-                                mainView.tag = i18n.tr("None")
-
-                                rootPageStack.push(Qt.resolvedUrl("../pages/MainPage.qml"))
+                                mainView.tag = i18n.tr("None")                        
                             }
+                            rootPageStack.push(mainConditionalPage)
                         }
                     }
                 }

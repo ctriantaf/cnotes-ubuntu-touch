@@ -42,5 +42,5 @@ Project {
         filter: "*"
     }
     /* List of plugin directories passed to QML runtime */
-    importPaths: [ "." ,"/usr/bin","/usr/lib/i386-linux-gnu/qt5/qml", "dirParserPlugin/" ]
+    importPaths: [ "." ,"/usr/bin","/usr/lib/i386-linux-gnu/qt5/qml", "./dirParserPlugin" ]
 }

@@ -82,17 +82,21 @@ ToolbarItems {
                 onTriggered: {
 
                     if (text === i18n.tr("Archive")) {
-                        print('archive view')
+                        print('Archive view')
 //                        notesListView.model = archivesModel
 //                        notesListView.update()
-                        mainView.showArchive = 'true'
+//                        mainView.showArchive = 'true'
+//                        print (mainView.showArchive)
+                        notesListView.model = archivesModel
                         text = i18n.tr("Notes")
                     }
                     else {
-                        print('note view')
-                        mainView.showArchive = 'false'
+                        print('Notes view')
+//                        mainView.showArchive = 'false'
+//                        print (mainView.showArchive)
 //                        notesListView.model = notes
 //                        notesListView.update()
+                        notesListView.model = notes
                         text = i18n.tr("Archive")
                     }
 

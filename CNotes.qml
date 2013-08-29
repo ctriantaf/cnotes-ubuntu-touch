@@ -28,7 +28,7 @@ MainView {
     */
     //automaticOrientation: true
     
-    width: units.gu(90)
+    width: units.gu(50)
     height: units.gu(75)
     headerColor: "#57365E"
     backgroundColor: "#A55263"
@@ -63,12 +63,22 @@ MainView {
     property string focusedEntry: ""
 
     notes: ListModel {
-        onCountChanged: notesListView.currentIndex = count - 1
+        onCountChanged: {
+            if (count > 0) {
+                notesListView.currentIndex = count - 1
+            }
+        }
     }
 
     categoriesModel: ListModel {}
 
-    archivesModel: ListModel {}
+    archivesModel: ListModel {
+        onCountChanged: {
+            if (count > 0) {
+                notesListView.currentIndex = count - 1
+            }
+        }
+    }
 
     filterNotesModel: ListModel {}
 
@@ -219,6 +229,8 @@ MainView {
                         ItemLayout {
                             item: "notesSidebar"
                             anchors.fill: parent
+//                            width: parent.width
+//                            height: parent.height
                         }
                     }
 
@@ -227,6 +239,7 @@ MainView {
                 NotesListView {
                     id: notesListView
                     Layouts.item: "notesSidebar"
+                    model: notes
 
                     onCurrentIndexChanged: {
                         if (notesListView.model.count === 0 && wideAspect) {
@@ -234,11 +247,11 @@ MainView {
                             return
                         }
 
-                        mainView.title = notes.get(currentIndex).title
-                        mainView.body = notes.get(currentIndex).body
-                        mainView.category = notes.get(currentIndex).category
-                        mainView.tag = notes.get(currentIndex).tag
-                        mainView.archive = notes.get(currentIndex).archive
+                        mainView.title = model.get(currentIndex).title
+                        mainView.body = model.get(currentIndex).body
+                        mainView.category = model.get(currentIndex).category
+                        mainView.tag = model.get(currentIndex).tag
+                        mainView.archive = model.get(currentIndex).archive
 
                         if (wideAspect) {
                             noteViewRow.body = mainView.body
