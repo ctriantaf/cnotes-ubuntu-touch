@@ -7,5 +7,5 @@ $ make
 ```
 
 ### Run
-To run the app on the root folder run ```qmlscene -I dirParserPlugin/ CNotes.qml```
+To run the app on the root folder run ```qmlscene -I dirParserPlugin/ CNotes.qml``` or run it from QtCreator
 
