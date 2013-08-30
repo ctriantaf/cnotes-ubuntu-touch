@@ -28,7 +28,7 @@ MainView {
     */
     //automaticOrientation: true
     
-    width: units.gu(90)
+    width: units.gu(50)
     height: units.gu(75)
     headerColor: "#57365E"
     backgroundColor: "#A55263"
@@ -182,7 +182,7 @@ MainView {
 
         Component.onCompleted: {
 
-            Storage.deleteDatabase()
+//            Storage.deleteDatabase()
             Storage.initialize()
             loadNotes()
             loadArchiveNotes()
