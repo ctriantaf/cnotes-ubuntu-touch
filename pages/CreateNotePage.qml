@@ -15,7 +15,10 @@ Tabs {
             id: createNotePage
             title: i18n.tr("Create note")
 
-            Component.onCompleted: mainView.id=idCount
+            Component.onCompleted: {
+                mainView.id=idCount
+                mainView.tag = i18n.tr("None")
+            }
 
             tools: ToolbarItems {
                 id: createNoteToolbar
@@ -50,54 +53,59 @@ Tabs {
                                 mainView.title = ""
                                 mainView.body = ""
                                 mainView.category = i18n.tr("None")
-                                mainView.tag = i18n.tr("None")                        
                             }
+                            mainView.tag = i18n.tr("None")
                             rootPageStack.push(mainConditionalPage)
                         }
                     }
                 }
             }
 
-            Column {
-                spacing: units.gu(2)
-                anchors {
-                    fill: parent
-                    verticalCenter: parent.verticalCenter
-                    margins: units.gu(2)
-                }
+            Flickable {
+                id: flickable
+                anchors.fill: parent
 
-                TextField {
-                    id: inputTitle
-                    width: parent.width
-                    placeholderText: i18n.tr("Title")
-                }
-
-                TextArea {
-                    id: inputBody
-                    width: parent.width
-                    placeholderText: i18n.tr("Body")
-                    height: units.gu(10)
-                }
-
-                Button {
-                    id: tagsButton
-                    text: i18n.tr("Tags: ") + mainView.tag
-                    width: parent.width
-                    color: "#A55263"
-
-                    onClicked: {
-                        PopupUtils.open(tagsComponent, tagsButton.itemHint)
+                Column {
+                    spacing: units.gu(2)
+                    anchors {
+                        fill: parent
+                        verticalCenter: parent.verticalCenter
+                        margins: units.gu(2)
                     }
-                }
 
-                ListItem.ValueSelector {
-                    id: categoriesSelector
-                    property variant categories: Storage.fetchAllCategories()
+                    TextField {
+                        id: inputTitle
+                        width: parent.width
+                        placeholderText: i18n.tr("Title")
+                    }
 
-                    width: parent.width
-                    text: i18n.tr("Category")
-                    expanded: false
-                    values: categories
+                    TextArea {
+                        id: inputBody
+                        width: parent.width
+                        placeholderText: i18n.tr("Body")
+                        height: units.gu(10)
+                    }
+
+                    Button {
+                        id: tagsButton
+                        text: i18n.tr("Tags: ") + mainView.tag
+                        width: parent.width
+                        color: "#A55263"
+
+                        onClicked: {
+                            PopupUtils.open(tagsComponent, tagsButton.itemHint)
+                        }
+                    }
+
+                    ListItem.ValueSelector {
+                        id: categoriesSelector
+                        property variant categories: Storage.fetchAllCategories()
+
+                        width: parent.width
+                        text: i18n.tr("Category")
+                        expanded: false
+                        values: categories
+                    }
                 }
             }
         }

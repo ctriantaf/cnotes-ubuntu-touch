@@ -82,27 +82,13 @@ ToolbarItems {
                 onTriggered: {
 
                     if (text === i18n.tr("Archive")) {
-                        print('Archive view')
-//                        notesListView.model = archivesModel
-//                        notesListView.update()
-//                        mainView.showArchive = 'true'
-//                        print (mainView.showArchive)
                         notesListView.model = archivesModel
                         text = i18n.tr("Notes")
                     }
                     else {
-                        print('Notes view')
-//                        mainView.showArchive = 'false'
-//                        print (mainView.showArchive)
-//                        notesListView.model = notes
-//                        notesListView.update()
                         notesListView.model = notes
                         text = i18n.tr("Archive")
                     }
-
-//                    if (!mainView.wideAspect) {
-//                        rootPageStack.push(Qt.resolvedUrl("ArchivesPage.qml"))
-//                    }
                 }
             }
         }

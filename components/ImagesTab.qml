@@ -14,8 +14,8 @@ Tab {
             var loc = "./pictures/" + mainView.id + '/'
             var imgs = dirParser.fetchAllFiles(loc)
             for (var i = 0; i < imgs.length; i++) {
-                print(loc+imgs[i])
-                imagesView.model.append({'location': loc+imgs[i]})
+                console.debug(imgs)
+                imagesView.model.append({'location': imgs[i]})
             }
         }
 
@@ -142,7 +142,6 @@ Tab {
 
                     onClicked: {
                         mainView.imagesModel.append({'location': location, 'imgTitle': imageTitle.text})
-                        print(imagesView.model.count)
                         PopupUtils.close(cameraDialog)
                     }
                 }

@@ -39,53 +39,58 @@ Tabs {
                 }
             }
 
-            Column {
-                spacing: units.gu(2)
-                anchors {
-                    fill: parent
-                    verticalCenter: parent.verticalCenter
-                    margins: units.gu(2)
-                }
+            Flickable {
+                id: flickable
+                anchors.fill: parent
 
-                TextField {
-                    id: inputTitleEdit
-                    width: parent.width
-                    text: title
-                    placeholderText: i18n.tr("Title")
-                }
+                Column {
+                    spacing: units.gu(2)
+                    anchors {
+                        fill: parent
+                        verticalCenter: parent.verticalCenter
+                        margins: units.gu(2)
+                    }
 
-                TextArea {
-                    id: inputBodyEdit
-                    text: body
-                    height: units.gu(10)
-                    width: parent.width
-                    placeholderText: i18n.tr("Body")
-                }
+                    TextField {
+                        id: inputTitleEdit
+                        width: parent.width
+                        text: title
+                        placeholderText: i18n.tr("Title")
+                    }
 
-                Button {
-                    id: editTagsButton
-                    text: i18n.tr("Tags: ") + tag
-                    width: parent.width
-                    color: "#A55263"
+                    TextArea {
+                        id: inputBodyEdit
+                        text: body
+                        height: units.gu(10)
+                        width: parent.width
+                        placeholderText: i18n.tr("Body")
+                    }
 
-                    onClicked: PopupUtils.open(tagsComponent, editTagsButton.itemHint)
-                }
+                    Button {
+                        id: editTagsButton
+                        text: i18n.tr("Tags: ") + tag
+                        width: parent.width
+                        color: "#A55263"
 
-                ListItem.ValueSelector {
-                    id: categoriesSelectorEdit
-                    property variant categories: Storage.fetchAllCategories()
+                        onClicked: PopupUtils.open(tagsComponent, editTagsButton.itemHint)
+                    }
 
-                    width: parent.width
-                    text: i18n.tr("Category")
-                    expanded: false
-                    values: categories
-                    selectedIndex: getCategoryIndex(mainView.category)
+                    ListItem.ValueSelector {
+                        id: categoriesSelectorEdit
+                        property variant categories: Storage.fetchAllCategories()
 
-                    function getCategoryIndex(name) {
-                        var cat = Storage.fetchAllCategories()
-                        for (var i = 0; i < cat.length; i++) {
-                            if (cat[i] === name) {
-                                return i
+                        width: parent.width
+                        text: i18n.tr("Category")
+                        expanded: false
+                        values: categories
+                        selectedIndex: getCategoryIndex(mainView.category)
+
+                        function getCategoryIndex(name) {
+                            var cat = Storage.fetchAllCategories()
+                            for (var i = 0; i < cat.length; i++) {
+                                if (cat[i] === name) {
+                                    return i
+                                }
                             }
                         }
                     }

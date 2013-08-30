@@ -23,18 +23,6 @@ Subtitled {
         }
     }
 
-//    visible: {
-//        print ("_Archive " + _archive + " - showArchive " + mainView.showArchive)
-//        print("Condition: " + (_archive === mainView.showArchive))
-//        if (_archive === mainView.showArchive) {
-//            print('Visible true')
-//            return true
-//        }
-//        print('Visible false')
-//        return false
-//    }
-
-
     property string _id
     property string _title
     property string _body
@@ -53,25 +41,13 @@ Subtitled {
             _view = "archive"
             Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view, _links)
             archivesModel.append({id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view, links:_links})
-//            print(notes.count + ' - ' + notesListView.currentIndex)
-//            notes.get(notesListView.currentIndex).archive = _archive
-//            print("Note archive value (archive): " + notes.get(notesListView.currentIndex).archive)
-//            notes.get(notesListView.currentIndex).view = _view
-//            notesListView.update()
             notes.remove(notesListView.currentIndex)
-            console.debug("Note moved to archive, count: " + archivesModel.count)
         }
         else {
             _archive = 'false'
             _view = "main"
             Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view, _links)
             archivesModel.remove(notesListView.currentIndex)
-            notes.insert(_id, {id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view, links:_links})
-//            notes.get(notesListView.currentIndex).archive = _archive
-//            print("Note archive value (back): " + note.get(notesListView.currentIndex).archive)
-//            notes.get(notesListView.currentIndex).view = _view
-//            notesListView.update()
-             console.debug("Note moved back, count: " + notes.count)
         }
     }
 
@@ -88,6 +64,6 @@ Subtitled {
         if (mainView.wideAspect)
             return
 
-        pageStack.push (Qt.resolvedUrl("../view/NoteView.qml"))
+        rootPageStack.push (Qt.resolvedUrl("../view/NoteView.qml"))
     }
 }

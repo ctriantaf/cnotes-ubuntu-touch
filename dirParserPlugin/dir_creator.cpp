@@ -17,11 +17,9 @@ QStringList DirParser::fetchAllFiles(const QString &name){
 
     QStringList entries = dir.entryList();
 
-    QString dir_absolute_path = dir.absolutePath();
-
     short entries_count = entries.count();
     for(short i=0;i<entries_count;i++)
-        entries.replace(i, dir_absolute_path+"/"+entries.at(i));
+        entries.replace(i, dir.absoluteFilePath(entries.at(i)));
     return entries;
 }
 
@@ -30,8 +28,7 @@ bool DirParser::dirExists(const QString &name){
 }
 
 bool DirParser::removeDir(const QString &dirName){
-    QDir dir(dirName);
-    return dir.removeRecursively();
+    return QDir(dirName).removeRecursively();
 }
 
 bool DirParser::remove(const QString &name){

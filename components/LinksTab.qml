@@ -49,8 +49,13 @@ Tab {
             delegate: ListItem.Standard {
                 text: link
 
-                //FIXME add url on browser
-//                onClicked: Qt.openUrlExternally(link)
+                onClicked: {
+                    if (link.indexOf("://") === -1) {
+                        Qt.openUrlExternally("http://" + link)
+                        return
+                    }
+                    Qt.openUrlExternally(link)
+                }
 
                 onPressAndHold: PopupUtils.open(linkPopoverComponent)
             }

@@ -15,6 +15,7 @@ function initialize() {
             tx.executeSql('CREATE TABLE IF NOT EXISTS notes(id TEXT NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL,'
                          + 'category TEXT NOT NULL, tag TEXT NOT NULL, archive TEXT NOT NULL, view TEXT NOT NULL, links TEXT NOT NULL)');
             tx.executeSql('CREATE TABLE IF NOT EXISTS categories(name TEXT NOT NULL)');
+            tx.executeSql('CREATE TABLE IF NOT EXISTS tags(name TEXT NOT NULL)');
       });
 }
 
@@ -24,6 +25,7 @@ function deleteDatabase() {
         function(tx){
             tx.executeSql("DROP TABLE notes;");
             tx.executeSql("DROP TABLE categories")
+            tx.executeSql("DROP TABLE tags")
 //            tx.executeSql("DROP DATABASE CNotesDB;");
         }
     );
@@ -270,4 +272,35 @@ function removeCategory(name) {
     }
       );
     return res;
+}
+
+function addTag(oldTag, newTag) {
+    var db = getDatabase();
+    var res = "";
+    db.transaction(function(tx) {
+        if (oldTag !== "") {
+            var rs = tx.executeSql('DELETE FROM categories WHERE name=?;', [oldTag]);
+        }
+        var rs = tx.executeSql('INSERT INTO tags VALUES(?);', [newTag]);
+        //console.log(rs.rowsAffected)
+        if (rs.rowsAffected > 0) {
+            res = "OK";
+        } else {
+            res = "Error";
+        }
+    }
+      );
+    return res;
+}
+
+function getUsedTags () {
+    var db = getDatabase();
+    var res= new Array();
+    db.transaction(function(tx) {
+        var rs = tx.executeSql('SELECT * FROM tags;');
+        for (var i = 0; i < rs.rows.length; i++) {
+            res[i] = rs.rows.item(i).name
+        }
+    })
+    return res
 }

@@ -3,7 +3,8 @@ import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
-import "Storage.js" as Storage
+import "../Storage.js" as Storage
+import "../images"
 
 Page {
     id: categoriesPage
@@ -20,7 +21,7 @@ Page {
                 objectName: "addCategoryAction"
 
                 text: i18n.tr("Add")
-                iconSource: Qt.resolvedUrl("images/add.svg")
+                iconSource: Qt.resolvedUrl("../images/add.svg")
 
                 onTriggered: {
                     categoriesPage.name = ""

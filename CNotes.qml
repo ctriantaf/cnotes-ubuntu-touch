@@ -28,7 +28,7 @@ MainView {
     */
     //automaticOrientation: true
     
-    width: units.gu(50)
+    width: units.gu(90)
     height: units.gu(75)
     headerColor: "#57365E"
     backgroundColor: "#A55263"
@@ -93,6 +93,8 @@ MainView {
         id: tagsModel
     }
 
+    DirParser {id: dirParser}
+
     onTagChanged: {
         if (wideAspect) {
             noteTagsModel.clear()
@@ -141,6 +143,15 @@ MainView {
         return false
     }
 
+    function tagIsUsed(t, tags) {
+        for (var i = 0; i < t.length; i++) {
+            if (t === tags[i]) {
+                return true
+            }
+        }
+        return false
+    }
+
     function getHtmlText(text) {
         var converter = new Showdown.Showdown.converter();
         return converter.makeHtml(text)
@@ -170,22 +181,22 @@ MainView {
 
         Component.onCompleted: {
 
-            Storage.deleteDatabase()
+//            Storage.deleteDatabase()
             Storage.initialize()
             loadNotes()
             loadArchiveNotes()
-            loadCategories()
 
-//            categoriesModel.append({categoryName: "None"})
-//            categoriesModel.append({categoryName: "Things to do"})
-//            categoriesModel.append({categoryName: "Work"})
-            Storage.addCategory("None")
-            Storage.addCategory("Things to do")
-            Storage.addCategory("Work")
+            if (dirParser.dirExists('./categories')) {
+                loadCategories()
+            }
+            else {
+                Storage.addCategory("None")
+                Storage.addCategory("Things to do")
+                Storage.addCategory("Work")
+                dirParser.createDirectory('./categories')
+            }
 
             rootPageStack.push(mainConditionalPage)
-
-//            u1Backend.setNote("a", "hello", "world", "a", "work", "false", "main")
         }
 
         Page {
@@ -204,19 +215,19 @@ MainView {
 
                         Row {
                             anchors.fill: parent
-//                            spacing: units.gu(2)
+                            spacing: units.gu(2)
 
                             ItemLayout {
                                 id: itemL
                                 item: "notesSidebar"
-                                width: parent.width / 3
+                                width: parent.width / 3 - units.gu(1)
                                 height: parent.height
                             }
 
                             ItemLayout {
                                 id: item
                                 item: "noteView"
-                                width: parent.width * 2 / 3
+                                width: parent.width * 2 / 3 - units.gu(1)
                                 height: parent.height
                             }
                         }
@@ -229,8 +240,6 @@ MainView {
                         ItemLayout {
                             item: "notesSidebar"
                             anchors.fill: parent
-//                            width: parent.width
-//                            height: parent.height
                         }
                     }
 
@@ -254,7 +263,6 @@ MainView {
                         mainView.archive = model.get(currentIndex).archive
 
                         if (wideAspect) {
-                            noteViewRow.body = mainView.body
                             noteViewRow.visible = true
                         }
                     }
@@ -273,6 +281,15 @@ MainView {
 
             Popover {
                 id: tagsPopover
+
+                property variant usedTags: Storage.getUsedTags()
+
+                Component.onCompleted: {
+                    for (var i = usedTags.length - 1; i > usedTags.length - 4; i--) {
+                        console.debug(usedTags[i])
+                        tagsModel.append({tag: usedTags[i]})
+                    }
+                }
 
                 Column {
                     anchors {
@@ -305,7 +322,7 @@ MainView {
                                 color: "#A55263"
                                 anchors.bottomMargin: units.gu(1)
                                 onClicked: {
-                                    if (tagTextField.text.length != 0) {
+                                    if (tagTextField.text.length != 0 && !tagIsUsed(tag, tagTextField.text.split(','))) {
                                         tagTextField.text = tagTextField.text.toString() + "," + tag
                                     }
                                     else {
@@ -356,10 +373,14 @@ MainView {
                                         // Check if tag already exists!
                                         if (!containTag(tagTextField.text.split(",")[i])) {
                                             if (tagsModel.count == 3) {
+                                                Storage.addTag(tagsModel.get(0), tagTextField.text.split(",")[i])
                                                 tagsModel.remove(0)
                                             }
+                                            else {
+                                                Storage.addTag("", tagTextField.text.split(",")[i])
+                                            }
+
                                             tagsModel.append({tag: tagTextField.text.split(",")[i]})
-//                                            tags.append({tag: tagTextField.text.split(",")[i]})
                                         }
                                     }
 
