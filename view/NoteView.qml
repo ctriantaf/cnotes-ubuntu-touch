@@ -17,7 +17,7 @@ Tabs {
             id: noteViewPage
             title: getHtmlText(mainView.title)
 
-            property variant allNotes
+//            property variant allNotes
 
             onVisibleChanged: {
                 if (visible == true) {
@@ -81,23 +81,23 @@ Tabs {
                 spacing: units.gu(2)
             }
 
-            function showNotesWithFilter (f) {
-                filterNotesModel.clear()
-                if (mainView.filter == "Tag") {
-                    noteViewPage.allNotes = Storage.fetchAllNotesWithTag(f)
-                }
-                else {
-                    noteViewPage.allNotes = Storage.fetchAllNotesWithCategory(f)
-                }
+//            function showNotesWithFilter (f) {
+//                filterNotesModel.clear()
+//                if (mainView.filter == "Tag") {
+//                    noteViewPage.allNotes = Storage.fetchAllNotesWithTag(f)
+//                }
+//                else {
+//                    noteViewPage.allNotes = Storage.fetchAllNotesWithCategory(f)
+//                }
 
-                for (var i = 0; i < noteViewPage.allNotes.length; i++) {
-                    var noteId = noteViewPage.allNotes[i]
-                    filterNotesModel.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
-                                         category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:Storage.getArchive(noteId),
-                                         view:Storage.getView(noteId)})
-                }
-                pageStack.push(Qt.resolvedUrl("../view/FilterNoteView.qml"))
-            }
+//                for (var i = 0; i < noteViewPage.allNotes.length; i++) {
+//                    var noteId = noteViewPage.allNotes[i]
+//                    filterNotesModel.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
+//                                         category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:Storage.getArchive(noteId),
+//                                         view:Storage.getView(noteId)})
+//                }
+//                pageStack.push(Qt.resolvedUrl("../view/FilterNoteView.qml"))
+//            }
         }
     }
 

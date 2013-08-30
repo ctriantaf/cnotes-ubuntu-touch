@@ -144,7 +144,8 @@ MainView {
     }
 
     function tagIsUsed(t, tags) {
-        for (var i = 0; i < t.length; i++) {
+        for (var i = 0; i < tags.length; i++) {
+            print (t + ' - ' + tags[i])
             if (t === tags[i]) {
                 return true
             }
@@ -181,7 +182,7 @@ MainView {
 
         Component.onCompleted: {
 
-//            Storage.deleteDatabase()
+            Storage.deleteDatabase()
             Storage.initialize()
             loadNotes()
             loadArchiveNotes()
@@ -285,8 +286,13 @@ MainView {
                 property variant usedTags: Storage.getUsedTags()
 
                 Component.onCompleted: {
-                    for (var i = usedTags.length - 1; i > usedTags.length - 4; i--) {
-                        console.debug(usedTags[i])
+                    var end = usedTags.length - 4
+                    if (usedTags.length < 4) {
+                        end = 0
+                    }
+
+                    for (var i = usedTags.length - 1; i > end; i--) {
+                        print (usedTags[i])
                         tagsModel.append({tag: usedTags[i]})
                     }
                 }
@@ -322,8 +328,10 @@ MainView {
                                 color: "#A55263"
                                 anchors.bottomMargin: units.gu(1)
                                 onClicked: {
-                                    if (tagTextField.text.length != 0 && !tagIsUsed(tag, tagTextField.text.split(','))) {
-                                        tagTextField.text = tagTextField.text.toString() + "," + tag
+                                    if (tagTextField.text.length != 0) {
+                                        if (!tagIsUsed(tag, tagTextField.text.split(','))) {
+                                            tagTextField.text = tagTextField.text.toString() + "," + tag
+                                        }
                                     }
                                     else {
                                         tagTextField.text = tag
