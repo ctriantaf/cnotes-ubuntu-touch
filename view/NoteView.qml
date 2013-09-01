@@ -26,11 +26,15 @@ Tabs {
                         noteTagsModel.append({tag: mainView.tag.split(",")[i]})
                     }
 
-                    noteLinksModel.clear()
-                    var links = Storage.getLinks(mainView.id)
-                    for (var i = 0; i < links.split(",").length; i++) {
-                        noteLinksModel.append({'link': links.split(",")[i]})
-                    }
+//                    noteLinksModel.clear()
+//                    var links = Storage.getLinks(mainView.id)
+//                    for (var i = 0; i < links.split(",").length; i++) {
+//                        if (links[i] === 'undefined') {
+//                            break;
+//                        }
+
+//                        noteLinksModel.append({'link': links.split(",")[i]})
+//                    }
                 }
             }
 

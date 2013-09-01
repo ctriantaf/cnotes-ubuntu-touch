@@ -14,7 +14,6 @@ Tab {
             var loc = "./pictures/" + mainView.id + '/'
             var imgs = dirParser.fetchAllFiles(loc)
             for (var i = 0; i < imgs.length; i++) {
-                console.debug(imgs)
                 imagesView.model.append({'location': imgs[i]})
             }
         }
@@ -128,9 +127,7 @@ Tab {
                     width: parent.width / 2
                     color: "#A55263"
                     onClicked: {
-                        var loc = imagesView.model.get(imagesView.currentIndex).location
-                        dirParser.remove(loc.substring(1))
-                        imagesView.model.remove(imagesView.currentIndex)
+                        dirParser.remove(location.substring(1))
                         PopupUtils.close(cameraDialog)
                     }
                 }

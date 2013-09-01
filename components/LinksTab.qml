@@ -1,18 +1,24 @@
 import QtQuick 2.0
+import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.Popups 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
+import "../Storage.js" as Storage
 
 Tab {
     title: i18n.tr("Links")
     page: Page {
-        Component.onCompleted: {
-            if (mainView.mode === "edit") {loadLinks()}
+        onVisibleChanged: {
+            if (mainView.mode !== "add") {loadLinks()}
         }
 
         function loadLinks() {
             linksListView.model.clear()
             var links = Storage.getLinks(mainView.id)
+            if (links === 'undefined') {
+                return
+            }
+
             for (var i = 0; i < links.split(",").length; i++) {
                 linksListView.model.append({'link': links.split(",")[i]})
             }

@@ -28,7 +28,7 @@ MainView {
     */
     //automaticOrientation: true
     
-    width: units.gu(50)
+    width: units.gu(90)
     height: units.gu(75)
     headerColor: "#57365E"
     backgroundColor: "#A55263"
@@ -145,7 +145,6 @@ MainView {
 
     function tagIsUsed(t, tags) {
         for (var i = 0; i < tags.length; i++) {
-            print (t + ' - ' + tags[i])
             if (t === tags[i]) {
                 return true
             }
@@ -159,7 +158,7 @@ MainView {
     }
 
     function getLinksForStorage() {
-        var res = ""
+        var res = "undefined"
         if (noteLinksModel.count  > 0) {
             res = noteLinksModel.get(0).link
             for (var i = 1; i < noteLinksModel.count; i++) {
@@ -194,6 +193,9 @@ MainView {
                 Storage.addCategory("None")
                 Storage.addCategory("Things to do")
                 Storage.addCategory("Work")
+                categoriesModel.append({categoryName: "None"})
+                categoriesModel.append({categoryName: "Things to do"})
+                categoriesModel.append({categoryName: "Work"})
                 dirParser.createDirectory('./categories')
             }
 
@@ -292,7 +294,6 @@ MainView {
                     }
 
                     for (var i = usedTags.length - 1; i > end; i--) {
-                        print (usedTags[i])
                         tagsModel.append({tag: usedTags[i]})
                     }
                 }
