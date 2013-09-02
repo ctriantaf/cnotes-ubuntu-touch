@@ -28,7 +28,7 @@ MainView {
     */
     //automaticOrientation: true
     
-    width: units.gu(90)
+    width: units.gu(50)
     height: units.gu(75)
     headerColor: "#57365E"
     backgroundColor: "#A55263"
@@ -60,7 +60,56 @@ MainView {
     property variant noteLinksModel
     property variant imagesModel
 
+    property variant backend
+    property variant notesDatabase
+
     property string focusedEntry: ""
+
+    notesDatabase: U1db.Database {
+        id: notesDatabase
+        path: "notesU1db"
+    }
+
+    U1db.Document {
+        id: notesDocument
+        database: notesDatabase
+        docId: "notes"
+        create: true
+        defaults: {'notes': [{}] }
+    }
+
+    U1db.Document {
+        id: archiveDocument
+        database: notesDatabase
+        docId: "archive"
+        create: true
+        defaults: {'archive': [{}] }
+    }
+
+    U1db.Document {
+        id: categoriesDocument
+        database: notesDatabase
+        docId: "categories"
+        create: true
+        defaults: {"categories": [{}] }
+    }
+
+    U1db.Index {
+        database: notesDatabase
+        id: allNotesIndex
+        expression: ["notes"]
+    }
+
+    U1db.Query {
+        id: allNotesQuery
+        index: allNotesIndex
+        query: []
+    }
+
+    backend: U1Backend {
+        id: backend
+        db: notesDatabase
+    }
 
     notes: ListModel {
         onCountChanged: {
@@ -117,6 +166,10 @@ MainView {
         }
 
     }
+
+//    function loadNotesU1db() {
+
+//    }
 
     function loadArchiveNotes() {
         archiveNotes = Storage.fetchNotes('true')
@@ -181,10 +234,19 @@ MainView {
 
         Component.onCompleted: {
 
-//            Storage.deleteDatabase()
+//            var id = "0"
+//            console.debug(backend.getTitle(id))
+//            console.debug(notesDatabase.getDoc("notes")[0].title)
+
+//            console.debug(notesDocument.contents.notes.length)
+//            console.debug(notesDatabase.getDoc("notes").notes.length)
+
+            Storage.deleteDatabase()
+            dirParser.removeDir('./categories')
             Storage.initialize()
-            loadNotes()
-            loadArchiveNotes()
+//            loadNotesU1db()
+//            loadNotes()
+//            loadArchiveNotes()
 
             if (dirParser.dirExists('./categories')) {
                 loadCategories()
@@ -251,13 +313,18 @@ MainView {
                 NotesListView {
                     id: notesListView
                     Layouts.item: "notesSidebar"
-                    model: notes
+                    model: notesDocument.contents.notes
 
                     onCurrentIndexChanged: {
-                        if (notesListView.model.count === 0 && wideAspect) {
-                            noteViewRow.visible = false
-                            return
-                        }
+
+//                        console.debug(notesDatabase.getDoc("notes").notes.length)
+//                        console.debug("Length: " + notesListView.model.length)
+//                        if (notesListView.model.length === 0 && wideAspect) {
+//                            noteViewRow.visible = false
+//                            return
+//                        }
+
+                        console.debug(notesListView.model.length)
 
                         mainView.title = model.get(currentIndex).title
                         mainView.body = model.get(currentIndex).body

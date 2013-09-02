@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.LocalStorage 2.0
+import U1db 1.0 as U1db
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
@@ -15,8 +16,8 @@ ListView {
         margins: units.gu(2)
     }
 
-//    model: mainView.notes
     delegate: NoteItem {
+        Component.onCompleted: {console.debug(modelData.title); console.debug("A")}
         _id: id
         _title: title
         _body: {

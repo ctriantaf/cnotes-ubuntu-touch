@@ -39,8 +39,11 @@ Tabs {
                                 return
                             }
 
-                            Storage.setNote(idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
-                                            tag, 'false', 'main', mainView.getLinksForStorage())
+//                            Storage.setNote(idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
+//                                            tag, 'false', 'main', mainView.getLinksForStorage())
+                            var res = mainView.backend.setNote(idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
+                                                     tag, 'false', 'main', mainView.getLinksForStorage())
+                            console.debug("Note created: " + res)
 
                             mainView.notes.append({title: inputTitle.text, body: inputBody.text, id: idCount,
                                              category: categoriesSelector.values[categoriesSelector.selectedIndex], tag:tag, archive: 'false', view:"main"})
