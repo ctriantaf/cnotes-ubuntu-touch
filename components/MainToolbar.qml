@@ -3,6 +3,13 @@ import Ubuntu.Components 0.1
 
 ToolbarItems {
         ToolbarButton {
+            visible: {
+                if (mainView.showArchive) {
+                    return false
+                }
+                return true
+            }
+
             action: Action {
                 id: addNoteAction
                 objectName: "addNoteAction"
@@ -82,13 +89,19 @@ ToolbarItems {
                 onTriggered: {
 
                     if (text === i18n.tr("Archive")) {
-                        notesListView.model = archivesModel
+//                        notesListView.model = archivesModel
+                        mainView.showArchive = true
+                        notesListView.model = mainView.database.getDoc("archive").notes
                         text = i18n.tr("Notes")
                     }
-                    else {
-                        notesListView.model = notes
+                    else if (text === i18n.tr("Notes")) {
+//                        notesListView.model = notes
+                        notesListView.model = mainView.database.getDoc("notes").notes
+                        mainView.showArchive = false
                         text = i18n.tr("Archive")
                     }
+
+                    console.debug("Full length: " + (mainView.database.getDoc("notes").notes.length + mainView.database.getDoc("archive").notes.length))
                 }
             }
         }

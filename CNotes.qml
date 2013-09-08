@@ -28,7 +28,7 @@ MainView {
     */
     //automaticOrientation: true
     
-    width: units.gu(90)
+    width: units.gu(50)
     height: units.gu(75)
     headerColor: "#57365E"
     backgroundColor: "#A55263"
@@ -49,7 +49,7 @@ MainView {
     property string mode
     property string link
     property string imageLocation
-    property string showArchive: 'false'
+    property bool showArchive: false
 
     property variant notes
     property variant categoriesModel
@@ -61,6 +61,8 @@ MainView {
     property variant imagesModel
 
     property string focusedEntry: ""
+    property variant database
+    property variant backend
 
     notes: ListModel {
         onCountChanged: {
@@ -176,15 +178,51 @@ MainView {
         archivesModel.clear()
     }
 
+    database: U1db.Database {
+        id: database
+        path: "U1Database"
+    }
+
+    U1db.Document {
+        id: notesDocument
+        database: database
+        docId: "notes"
+        create: true
+        defaults: {"notes": []}
+    }
+
+    U1db.Document {
+        id: archiveDocument
+        database: database
+        docId: "archive"
+        create: true
+        defaults: {"notes": []}
+    }
+
+    U1db.Document {
+        id: categoriesDocument
+        database: database
+        docId: "categories"
+        create: true
+        defaults: {"categories": ["None", "Work", "Things to do"] }
+    }
+
+    backend: U1Backend {
+        id: backend
+    }
+
     PageStack {
         id: rootPageStack
+
+        Component.onDestruction: dirParser.remove('./U1Database')
 
         Component.onCompleted: {
 
 //            Storage.deleteDatabase()
             Storage.initialize()
-            loadNotes()
-            loadArchiveNotes()
+            dirParser.removeDir('./categories')
+//            loadNotes()
+//            loadArchiveNotes()
 
             if (dirParser.dirExists('./categories')) {
                 loadCategories()
@@ -251,19 +289,20 @@ MainView {
                 NotesListView {
                     id: notesListView
                     Layouts.item: "notesSidebar"
-                    model: notes
+                    model: notesDocument.contents.notes
 
                     onCurrentIndexChanged: {
-                        if (notesListView.model.count === 0 && wideAspect) {
+                        if (notesDocument.contents.notes.length === 0 && wideAspect) {
                             noteViewRow.visible = false
                             return
                         }
 
-                        mainView.title = model.get(currentIndex).title
-                        mainView.body = model.get(currentIndex).body
-                        mainView.category = model.get(currentIndex).category
-                        mainView.tag = model.get(currentIndex).tag
-                        mainView.archive = model.get(currentIndex).archive
+//                        mainView.title = model[currentIndex].title
+//                        mainView.title = model.get(currentIndex).title
+//                        mainView.body = model.get(currentIndex).body
+//                        mainView.category = model.get(currentIndex).category
+//                        mainView.tag = model.get(currentIndex).tag
+//                        mainView.archive = model.get(currentIndex).archive
 
                         if (wideAspect) {
                             noteViewRow.visible = true

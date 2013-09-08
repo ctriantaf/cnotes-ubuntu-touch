@@ -39,11 +39,20 @@ Tabs {
                                 return
                             }
 
-                            Storage.setNote(idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
-                                            tag, 'false', 'main', mainView.getLinksForStorage())
+//                            Storage.setNote(idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
+//                                            tag, 'false', 'main', mainView.getLinksForStorage())
 
-                            mainView.notes.append({title: inputTitle.text, body: inputBody.text, id: idCount,
-                                             category: categoriesSelector.values[categoriesSelector.selectedIndex], tag:tag, archive: 'false', view:"main"})
+
+//                            var values = {idCount: {'title': inputTitle.text, 'body': inputBody.text,
+//                                    'category': categoriesSelector.values[categoriesSelector.selectedIndex],
+//                                    'tag': tag, 'archive': 'false', 'view': 'main', 'links': mainView.getLinksForStorage()}}
+//                            console.debug(mainView.notesDatabase.putDoc(values, "notes"))
+//                            mainView.notesDocument.contents.notes.changed()
+                            mainView.backend.setNote(inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
+                                                     tag, 'false', 'main', mainView.getLinksForStorage(), "notes")
+
+//                            mainView.notes.append({title: inputTitle.text, body: inputBody.text, id: idCount,
+//                                             category: categoriesSelector.values[categoriesSelector.selectedIndex], tag:tag, archive: 'false', view:"main"})
                             idCount++
 
                             inputTitle.text = ""
