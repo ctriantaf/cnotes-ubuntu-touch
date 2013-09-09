@@ -15,42 +15,24 @@ ListView {
         margins: units.gu(2)
     }
 
+    property int pos
+
 //    model: mainView.notes
     delegate: NoteItem {
 
         Component.onCompleted: {
-            console.debug("======================== \n")
-//            console.debug(console.debug(mainView.database.getDoc("archive").notes[index].title) + "\n")
-            console.debug("Notes length: " + mainView.database.getDoc("notes").notes.length + "\n")
-            console.debug("Archive length: " + mainView.database.getDoc("archive").notes.length + "\n")
-            console.debug("========================")
+//            console.debug("======================== \n")
+////            console.debug(console.debug(mainView.database.getDoc("archive").notes[index].title) + "\n")
+//            console.debug("Notes length: " + mainView.database.getDoc("notes").notes.length + "\n")
+//            console.debug("Archive length: " + mainView.database.getDoc("archive").notes.length + "\n")
+//            console.debug("========================")
         }
 
-//        _id: /*mainView.database.getDoc(doc)*/doc.notes.length
         _id: {
-//            if (doc.notes.length > 0) {
-//                return doc.notes.length - 1
-//            }
-//            return 0
-//            return doc.notes.length
-//            console.debug(mainView.database.getDoc("archive").notes[index].title)
             return index
         }
 
-//        _id: {
-//            if (showArchive) {
-//                return mainView.database.getDoc("archive").notes.length
-//            }
-//            return mainView.database.getDoc("notes").notes.length
-//        }
-
-        _title: /*mainView.backend.getTitle(_id, doc)*/getCorrectDoc().notes[index].title
-//        _title: {
-//            if (showArchive) {
-//                return mainView.database.getDoc("archive").notes[_id].
-//            }
-//            return mainView.database.getDoc("notes").notes.length
-//        }
+        _title: getCorrectDoc().notes[index].title
 
         _body: {
             var body = /*mainView.backend.getBody(_id, doc)*/getCorrectDoc().notes[_id].body
@@ -65,16 +47,17 @@ ListView {
         _view: /*mainView.backend.getView(_id, doc)*/getCorrectDoc().notes[_id].view
 
         onPressAndHold: {
+            pos = _id
             PopupUtils.open(noteRemoveComponent)
         }
 
         function getCorrectDoc() {
             if (mainView.showArchive) {
-                console.debug("Archive docs, " + mainView.showArchive)
+//                console.debug("Archive docs, " + mainView.showArchive)
                 return mainView.database.getDoc("archive")
             }
             else {
-                console.debug("Notes docs, " + mainView.showArchive)
+//                console.debug("Notes docs, " + mainView.showArchive)
                 return mainView.database.getDoc("notes")
             }
         }
@@ -109,10 +92,20 @@ ListView {
                 onClicked: {
 //                    Storage.removeNote(notesView.model.get(notesView.currentIndex).id)
 //                    notesView.model.remove(notesView.currentIndex)
-                    notesView.model[notesView.currentIndex]
+//                    notesView.model[notesView.currentIndex]
+                    if (mainView.showArchive) {
+                        console.debug(pos)
+                        mainView.backend.removeNote(pos, "archive")
+                        notesView.model = mainView.database.getDoc("archive").notes
+                    }
+                    else {
+                        console.debug(pos)
+                        mainView.backend.removeNote(pos, "notes")
+                        notesView.model = mainView.database.getDoc("notes").notes
+                    }
 
-                    if (dirParser.dirExists('./pictures/' + mainView.id + '/')) {
-                        dirParser.removeDir('./pictures/' + mainView.id + '/')
+                    if (dirParser.dirExists('./pictures/' + pos + '/')) {
+                        dirParser.removeDir('./pictures/' + pos + '/')
                     }
 
                     PopupUtils.close(noteRemovePopover)

@@ -80,4 +80,6 @@ Subtitled {
 
         rootPageStack.push (Qt.resolvedUrl("../view/NoteView.qml"))
     }
+
+
 }

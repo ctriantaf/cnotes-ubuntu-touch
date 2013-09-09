@@ -44,15 +44,11 @@ Item {
             }
         }
 
-        replaceValues(newValues, docId)
-    }
-
-    function replaceValues(values, doc) {
-        if (doc === "notes") {
-            mainView.database.putDoc(values, "notes")
+        if (docId === "notes") {
+            mainView.database.putDoc(newValues, "notes")
         }
         else {
-            mainView.database.putDoc(values, "archive")
+            mainView.database.putDoc(newValues, "archive")
         }
     }
 
