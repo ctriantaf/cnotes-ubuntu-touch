@@ -12,8 +12,10 @@ Item {
                                 'category': category, 'tag': tag, 'archive': archive, 'view': view, 'links': links}
 
             mainView.database.putDoc(values, "notes")
-            console.debug(notesListView.model.length)
-            notesListView.model = mainView.database.getDoc("notes").notes
+
+            if (mainView.createNote) {
+                notesListView.model = mainView.database.getDoc("notes").notes
+            }
         }
         else {
             values = mainView.database.getDoc("archive")

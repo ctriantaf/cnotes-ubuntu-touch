@@ -84,15 +84,9 @@ Page {
 
                     if (mainView.database.getDoc("categories").categories.length !== 1) {
                         if (categoriesPage.mode == "add") {
-//                            categoriesModel.append({categoryName: editCategoryName.text})
-//                            Storage.addCategory(editCategoryName.text)
                             mainView.backend.addCategory(editCategoryName.text)
                         }
                         else {
-//                            categoriesModel.remove(categoriesPage.pos)
-//                            categoriesModel.insert(categoriesPage.pos, {categoryName: editCategoryName.text})
-//                            Storage.replaceCategory(name, editCategoryName.text)
-//                            console.debug(categoriesView.currentIndex)
                             mainView.backend.replaceCategory(categoriesPage.pos, editCategoryName.text)
                         }
                         categoriesView.model = mainView.database.getDoc("categories").categories

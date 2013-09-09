@@ -100,8 +100,6 @@ ToolbarItems {
                         mainView.showArchive = false
                         text = i18n.tr("Archive")
                     }
-
-                    console.debug("Full length: " + (mainView.database.getDoc("notes").notes.length + mainView.database.getDoc("archive").notes.length))
                 }
             }
         }

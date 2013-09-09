@@ -50,6 +50,7 @@ MainView {
     property string link
     property string imageLocation
     property bool showArchive: false
+    property bool createNote: false
 
     property variant notes
     property variant categoriesModel
@@ -218,24 +219,9 @@ MainView {
 
         Component.onCompleted: {
 
-//            Storage.deleteDatabase()
+            // TODO delete next lines
             Storage.initialize()
             dirParser.removeDir('./categories')
-//            loadNotes()
-//            loadArchiveNotes()
-
-            if (dirParser.dirExists('./categories')) {
-                loadCategories()
-            }
-            else {
-                Storage.addCategory("None")
-                Storage.addCategory("Things to do")
-                Storage.addCategory("Work")
-                categoriesModel.append({categoryName: "None"})
-                categoriesModel.append({categoryName: "Things to do"})
-                categoriesModel.append({categoryName: "Work"})
-                dirParser.createDirectory('./categories')
-            }
 
             rootPageStack.push(mainConditionalPage)
         }

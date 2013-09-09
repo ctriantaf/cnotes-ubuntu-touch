@@ -14,13 +14,12 @@ Tab {
 
         function loadLinks() {
             linksListView.model.clear()
-            var links = Storage.getLinks(mainView.id)
-            if (links === 'undefined') {
-                return
-            }
+            var links = notesListView.model[mainView.id].links
 
             for (var i = 0; i < links.split(",").length; i++) {
-                linksListView.model.append({'link': links.split(",")[i]})
+                if (links.split(",")[i] !== "Unknown") {
+                    linksListView.model.append({'link': links.split(",")[i]})
+                }
             }
         }
 

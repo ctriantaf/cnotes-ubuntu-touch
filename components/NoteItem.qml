@@ -38,28 +38,14 @@ Subtitled {
     onItemRemoved: {
         var id
 
+        mainView.createNote = false
         if (_view === "main") {
             id = _id
-//            mainView.backend.removeNote(_id, "notes")
-
-//            _id = mainView.database.getDoc("archive").notes.length - 1
-//            _archive = 'true'
-//            _view = "archive"
-//            Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view, _links)
-//            archivesModel.append({id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view, links:_links})
-//            notes.remove(notesListView.currentIndex)
             mainView.backend.setNote(_title, _body, _category, _tag, 'true', 'archive', _links, "archive")
             mainView.backend.removeNote(id, "notes")
         }
         else {
             id = _id
-//            mainView.backend.removeNote(_id, "archive")
-
-//            _id = mainView.database.getDoc("notes").notes.length - 1
-//            _archive = 'false'
-//            _view = "main"
-//            Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view, _links)
-//            archivesModel.remove(notesListView.currentIndex)
             mainView.backend.setNote(_title, _body, _category, _tag, 'false', 'main', _links, "notes")
             mainView.backend.removeNote(id, "archive")
         }
