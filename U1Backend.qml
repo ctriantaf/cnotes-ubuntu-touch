@@ -4,11 +4,11 @@ import Ubuntu.Components 0.1
 
 Item {
 
-    function setNote(title, body, tag, category, archive, view, links, doc) {
+    function setNote(id, title, body, category, tag, archive, view, links, doc) {
         var values
         if (doc === "notes") {
             values = mainView.database.getDoc("notes")
-            values["notes"][mainView.database.getDoc("notes").notes.length] = {'title': title, 'body': body,
+            values["notes"][mainView.database.getDoc("notes").notes.length] = {'id': id, 'title': title, 'body': body,
                                 'category': category, 'tag': tag, 'archive': archive, 'view': view, 'links': links}
 
             mainView.database.putDoc(values, "notes")
@@ -19,22 +19,38 @@ Item {
         }
         else {
             values = mainView.database.getDoc("archive")
-            values["notes"][mainView.database.getDoc("archive").notes.length] = {'title': title, 'body': body,
+            values["notes"][mainView.database.getDoc("archive").notes.length] = {'id': id, 'title': title, 'body': body,
                                 'category': category, 'tag': tag, 'archive': archive, 'view': view, 'links': links}
 
             mainView.database.putDoc(values, "archive")
         }
     }
 
-    function removeNote(id, docId) {
-        var values
-        id = parseInt(id)
-        if (docId === "notes") {
-            values = mainView.database.getDoc("notes")
+    function replaceNote(pos, doc, title, body, category, tag, archive, view) {
+        pos = parseInt(pos)
+        var values = getValues(doc)
+
+        values["notes"][pos].title = title
+        values["notes"][pos].body = body
+        values["notes"][pos].tag = tag
+        values["notes"][pos].category = category
+        values["notes"][pos].archive = archive
+        values["notes"][pos].view = view
+
+        setValues(values, doc)
+
+        if (mainView.showArchive) {
+            notesListView.model = mainView.database.getDoc("archive").notes
         }
         else {
-            values = mainView.database.getDoc("archive")
+            notesListView.model = mainView.database.getDoc("notes").notes
         }
+    }
+
+    function removeNote(id, doc) {
+
+        id = parseInt(id)
+        var values = getValues(doc)
 
         var j = 0
         var newValues = {"notes": []}
@@ -46,12 +62,84 @@ Item {
             }
         }
 
-        if (docId === "notes") {
-            mainView.database.putDoc(newValues, "notes")
+        setValues(newValues, doc)
+    }
+
+    function getValues(doc) {
+        var values
+        if (doc === "notes") {
+            values = mainView.database.getDoc("notes")
         }
         else {
-            mainView.database.putDoc(newValues, "archive")
+            values = mainView.database.getDoc("archive")
         }
+
+        return values
+    }
+
+    function setValues(values, doc) {
+        if (doc === "notes") {
+            mainView.database.putDoc(values, "notes")
+        }
+        else {
+            mainView.database.putDoc(values, "archive")
+        }
+    }
+
+    function fecthAllNotesWithTag(tag) {
+        var res = {"notes": []}
+        var archive = mainView.database.getDoc("archive")
+
+        var all = mainView.database.getDoc("notes")
+        for (var i = 0; i < archive["notes"].length; i++) {
+            all["notes"][all["notes"].length] = archive["notes"][i]
+        }
+
+        var j = 0
+        for (var i = 0; i < all["notes"].length; i++) {
+            if (containTag(tag, all["notes"][i].tag)) {
+                res["notes"][j] = all["notes"][i]
+                j++
+            }
+        }
+
+        return res
+    }
+
+    function containTag(tag, tags) {
+        var t = tags.split(",")
+        for (var i = 0; i < t.length; i++) {
+            if (tag === t[i]) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    function fetchAllNotesWithCategory(cat) {
+        var res = {"notes": []}
+        var archive = mainView.database.getDoc("archive")
+
+        var all = mainView.database.getDoc("notes")
+        for (var i = 0; i < archive["notes"].length; i++) {
+            all["notes"][all["notes"].length] = archive["notes"][i]
+        }
+
+        var j = 0
+        for (var i = 0; i < all["notes"].length; i++) {
+            if (all["notes"][i].category === cat) {
+                res["notes"][j] = all["notes"][i]
+                j++
+            }
+        }
+
+        return res
+    }
+
+    function deleteArchive() {
+        mainView.database.putDoc({"notes" : []}, "archive")
+        notesListView.model = mainView.database.getDoc("archive").notes
     }
 
     function addCategory(name) {

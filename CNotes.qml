@@ -36,7 +36,7 @@ MainView {
 
     property bool wideAspect: width > units.gu(80)
 
-    property string idCount : "0"
+    property string idCount
     property string id
     property string title
     property string body
@@ -48,9 +48,11 @@ MainView {
     property string archive
     property string mode
     property string link
+    property string links
     property string imageLocation
     property bool showArchive: false
     property bool createNote: false
+    property string specificTag
 
     property variant notes
     property variant categoriesModel
@@ -107,35 +109,52 @@ MainView {
         }
     }
 
-    function loadNotes() {
-        allNotes = Storage.fetchNotes('false')
+    function setIdCount() {
         idCount = 0
-        for (var i = 0; i < allNotes.length; i++) {
-            var noteId = allNotes[i]
-            mainView.notes.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
-                                     category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'false', view:"main"})
 
-            if (noteId > idCount)
-                idCount = noteId
+        var archive = database.getDoc("archive")
+
+        var all = database.getDoc("notes")
+        for (var i = 0; i < archive["notes"].length; i++) {
+            all["notes"][all["notes"].length] = archive["notes"][i]
         }
 
-    }
-
-    function loadArchiveNotes() {
-        archiveNotes = Storage.fetchNotes('true')
-        for (var i = 0; i < archiveNotes.length; i++) {
-            var noteId = archiveNotes[i]
-            archivesModel.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
-                                     category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'true', view:"archive"})
+        for (var i = 0; i < all["notes"].length; i++) {
+            if (all["notes"][i].id > idCount) {
+                idCount = all["notes"][i].id
+            }
         }
     }
 
-    function loadCategories() {
-        var cat = Storage.fetchAllCategories()
-        for (var i = 0; i < cat.length; i++) {
-            categoriesModel.append({categoryName: cat[i]})
-        }
-    }
+//    function loadNotes() {
+//        allNotes = Storage.fetchNotes('false')
+//        idCount = 0
+//        for (var i = 0; i < allNotes.length; i++) {
+//            var noteId = allNotes[i]
+//            mainView.notes.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
+//                                     category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'false', view:"main"})
+
+//            if (noteId > idCount)
+//                idCount = noteId
+//        }
+
+//    }
+
+//    function loadArchiveNotes() {
+//        archiveNotes = Storage.fetchNotes('true')
+//        for (var i = 0; i < archiveNotes.length; i++) {
+//            var noteId = archiveNotes[i]
+//            archivesModel.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
+//                                     category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'true', view:"archive"})
+//        }
+//    }
+
+//    function loadCategories() {
+//        var cat = Storage.fetchAllCategories()
+//        for (var i = 0; i < cat.length; i++) {
+//            categoriesModel.append({categoryName: cat[i]})
+//        }
+//    }
 
     function containTag(t) {
         for (var i = 0; i < tagsModel.count; i++) {
@@ -218,10 +237,7 @@ MainView {
         Component.onDestruction: dirParser.remove('./U1Database')
 
         Component.onCompleted: {
-
-            // TODO delete next lines
-            Storage.initialize()
-            dirParser.removeDir('./categories')
+            setIdCount()
 
             rootPageStack.push(mainConditionalPage)
         }

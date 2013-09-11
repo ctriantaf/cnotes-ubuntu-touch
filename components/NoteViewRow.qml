@@ -66,6 +66,7 @@ Row {
 
             onClicked: {
                 mainView.filter = "Tag"
+                mainView.specificTag = tag
                 showNotesWithFilter (tag)
             }
         }
@@ -73,19 +74,21 @@ Row {
 
     function showNotesWithFilter (f) {
         filterNotesModel.clear()
+
+        var allNotes
         if (mainView.filter == "Tag") {
-            allNotes = Storage.fetchAllNotesWithTag(f)
+            allNotes = mainView.backend.fecthAllNotesWithTag(f)
         }
         else {
-            allNotes = Storage.fetchAllNotesWithCategory(f)
+            allNotes = mainView.backend.fetchAllNotesWithCategory(f)
         }
 
-        for (var i = 0; i < allNotes.length; i++) {
-            var noteId = allNotes[i]
-            filterNotesModel.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
-                                 category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:Storage.getArchive(noteId),
-                                 view:Storage.getView(noteId)})
+        for (var i = 0; i < allNotes["notes"].length; i++) {
+            var values = allNotes.notes[i]
+            filterNotesModel.append({title:values.title, body:values.body, tag:values.tag, category:values.category,
+                                        archive:values.archive, view:values.view, links:values.links})
         }
+
         rootPageStack.push(Qt.resolvedUrl("../view/FilterNoteView.qml"))
     }
 }

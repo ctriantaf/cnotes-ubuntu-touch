@@ -14,7 +14,12 @@ Tab {
 
         function loadLinks() {
             linksListView.model.clear()
-            var links = notesListView.model[mainView.id].links
+            var links
+            try {
+                links = notesListView.model[mainView.id].links
+            } catch (error) {
+                links = mainView.links
+            }
 
             for (var i = 0; i < links.split(",").length; i++) {
                 if (links.split(",")[i] !== "Unknown") {

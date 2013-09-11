@@ -41,12 +41,12 @@ Subtitled {
         mainView.createNote = false
         if (_view === "main") {
             id = _id
-            mainView.backend.setNote(_title, _body, _category, _tag, 'true', 'archive', _links, "archive")
+            mainView.backend.setNote(_id, _title, _body, _category, _tag, 'true', 'archive', _links, "archive")
             mainView.backend.removeNote(id, "notes")
         }
         else {
             id = _id
-            mainView.backend.setNote(_title, _body, _category, _tag, 'false', 'main', _links, "notes")
+            mainView.backend.setNote(_id, _title, _body, _category, _tag, 'false', 'main', _links, "notes")
             mainView.backend.removeNote(id, "archive")
         }
     }
@@ -60,6 +60,7 @@ Subtitled {
         mainView.tag = _tag
         mainView.position = model.index
         mainView.archive = _archive
+        mainView.links = _links
 
         if (mainView.wideAspect)
             return

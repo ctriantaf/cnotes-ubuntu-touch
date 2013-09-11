@@ -40,11 +40,10 @@ Tabs {
                             }
 
                             mainView.createNote = true
-                            console.debug(mainView.createNote)
-                            mainView.backend.setNote(inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
+                            mainView.backend.setNote(mainView.idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
                                                      tag, 'false', 'main', mainView.getLinksForStorage(), "notes")
-                            idCount++
 
+                            mainView.idCount++
                             inputTitle.text = ""
                             inputBody.text = ""
 

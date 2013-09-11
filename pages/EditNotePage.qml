@@ -26,14 +26,37 @@ Tabs {
                         iconSource: Qt.resolvedUrl("../images/select.svg")
 
                         onTriggered: {
-                            Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex], tag, 'false', 'main')
-                            mainView.notes.get(mainView.position).title = inputTitleEdit.text
-                            mainView.notes.get(mainView.position).body = inputBodyEdit.text
-                            mainView.notes.get(mainView.position).category = categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex]
-                            mainView.notes.get(mainView.position).tag = tag
+                            // TODO fix it!
+//                            Storage.setNote(inputTitleEdit.text, inputBodyEdit.text, categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex], tag, 'false', 'main')
+//                            mainView.notes.get(mainView.position).title = inputTitleEdit.text
+//                            mainView.notes.get(mainView.position).body = inputBodyEdit.text
+//                            mainView.notes.get(mainView.position).category = categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex]
+//                            mainView.notes.get(mainView.position).tag = tag
 
-                            mainView.tag = tag
-                            pageStack.push(Qt.resolvedUrl("../pages/MainPage.qml"))
+                            var doc
+                            var archive
+                            if (mainView.showArchive) {
+                                doc = 'archive'
+                                archive = 'true'
+                            }
+                            else {
+                                doc = 'notes'
+                                archive = 'false'
+                            }
+
+                            mainView.backend.replaceNote(mainView.id, doc, inputTitleEdit.text, inputBodyEdit.text,
+                                                         categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex],
+                                                         tag, archive, 'main')
+
+//                            mainView.tag = tag
+//                            if (mainView.showArchive) {
+//                                mainView.notesListView.model = mainView.database.getDoc("archive").notes
+//                            }
+//                            else {
+//                                mainView.notesListView.model = mainView.database.getDoc("notes").notes
+//                            }
+
+                            pageStack.push(mainConditionalPage)
                         }
                     }
                 }
@@ -82,13 +105,13 @@ Tabs {
                         width: parent.width
                         text: i18n.tr("Category")
                         expanded: false
-                        values: categories
+//                        values: categories
+                        values: mainView.database.getDoc("categories").categories
                         selectedIndex: getCategoryIndex(mainView.category)
 
                         function getCategoryIndex(name) {
-                            var cat = Storage.fetchAllCategories()
-                            for (var i = 0; i < cat.length; i++) {
-                                if (cat[i] === name) {
+                            for (var i = 0; i < values.length; i++) {
+                                if (values[i] === name) {
                                     return i
                                 }
                             }

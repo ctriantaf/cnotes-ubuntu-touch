@@ -20,25 +20,25 @@ ListView {
     delegate: NoteItem {
 
         _id: {
-            return index
+            return idCount
         }
 
         _title: getCorrectDoc().notes[index].title
 
         _body: {
-            var body = getCorrectDoc().notes[_id].body
+            var body = getCorrectDoc().notes[index].body
             if (body.length > 80)
                 return body.substring(0, 80) + "..."
             return body
         }
 
-        _tag: getCorrectDoc().notes[_id].tag
-        _category: getCorrectDoc().notes[_id].category
-        _archive: getCorrectDoc().notes[_id].archive
-        _view: getCorrectDoc().notes[_id].view
+        _tag: getCorrectDoc().notes[index].tag
+        _category: getCorrectDoc().notes[index].category
+        _archive: getCorrectDoc().notes[index].archive
+        _view: getCorrectDoc().notes[index].view
 
         onPressAndHold: {
-            pos = _id
+            pos = index
             PopupUtils.open(noteRemoveComponent)
         }
 
@@ -79,16 +79,11 @@ ListView {
                 }
 
                 onClicked: {
-//                    Storage.removeNote(notesView.model.get(notesView.currentIndex).id)
-//                    notesView.model.remove(notesView.currentIndex)
-//                    notesView.model[notesView.currentIndex]
                     if (mainView.showArchive) {
-                        console.debug(pos)
                         mainView.backend.removeNote(pos, "archive")
                         notesView.model = mainView.database.getDoc("archive").notes
                     }
                     else {
-                        console.debug(pos)
                         mainView.backend.removeNote(pos, "notes")
                         notesView.model = mainView.database.getDoc("notes").notes
                     }

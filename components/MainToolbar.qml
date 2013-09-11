@@ -80,6 +80,25 @@ ToolbarItems {
 
         ToolbarButton {
             action: Action {
+                id: deleteArchive
+                objectName: "deleteArchive"
+
+                iconSource: Qt.resolvedUrl("../images/close.svg")
+                text: i18n.tr("Delete all")
+
+                onTriggered: mainView.backend.deleteArchive()
+            }
+
+            visible: {
+                if (mainView.showArchive) {
+                    return true
+                }
+                return false
+            }
+        }
+
+        ToolbarButton {
+            action: Action {
                 id: archivesPageAction
                 objectName: "archivesPageAction"
 
