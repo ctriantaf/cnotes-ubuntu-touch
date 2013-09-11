@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtQuick.LocalStorage 2.0
 import QtMultimedia 5.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
@@ -7,7 +6,6 @@ import Ubuntu.Components.Popups 0.1
 import Ubuntu.Layouts 0.1
 import U1db 1.0 as U1db
 import DirParser 1.0
-import "Storage.js" as Storage
 import "showdown.js" as Showdown
 import "components"
 import "view"
@@ -125,36 +123,6 @@ MainView {
             }
         }
     }
-
-//    function loadNotes() {
-//        allNotes = Storage.fetchNotes('false')
-//        idCount = 0
-//        for (var i = 0; i < allNotes.length; i++) {
-//            var noteId = allNotes[i]
-//            mainView.notes.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
-//                                     category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'false', view:"main"})
-
-//            if (noteId > idCount)
-//                idCount = noteId
-//        }
-
-//    }
-
-//    function loadArchiveNotes() {
-//        archiveNotes = Storage.fetchNotes('true')
-//        for (var i = 0; i < archiveNotes.length; i++) {
-//            var noteId = archiveNotes[i]
-//            archivesModel.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
-//                                     category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'true', view:"archive"})
-//        }
-//    }
-
-//    function loadCategories() {
-//        var cat = Storage.fetchAllCategories()
-//        for (var i = 0; i < cat.length; i++) {
-//            categoriesModel.append({categoryName: cat[i]})
-//        }
-//    }
 
     function containTag(t) {
         for (var i = 0; i < tagsModel.count; i++) {

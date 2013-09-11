@@ -26,7 +26,7 @@ Item {
         }
     }
 
-    function replaceNote(pos, doc, title, body, category, tag, archive, view) {
+    function replaceNote(pos, doc, title, body, category, tag, archive, view, links) {
         pos = parseInt(pos)
         var values = getValues(doc)
 
@@ -36,6 +36,7 @@ Item {
         values["notes"][pos].category = category
         values["notes"][pos].archive = archive
         values["notes"][pos].view = view
+        values["notes"][pos].links = links
 
         setValues(values, doc)
 

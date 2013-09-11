@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=CNotes
-Comment=My project description
+Comment=Simple app for taking notes
 Exec=/usr/bin/qmlscene $@ /usr/share/CNotes/CNotes.qml
 Icon=./CNotes.png
 Terminal=false
