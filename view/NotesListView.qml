@@ -17,9 +17,7 @@ ListView {
 
     delegate: NoteItem {
 
-        _id: {
-            return idCount
-        }
+        _id: idCount
 
         _title: getCorrectDoc().notes[index].title
 

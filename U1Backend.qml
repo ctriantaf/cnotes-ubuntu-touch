@@ -62,7 +62,6 @@ Item {
                 j++
             }
         }
-
         setValues(newValues, doc)
     }
 
@@ -167,5 +166,17 @@ Item {
         }
 
         mainView.database.putDoc(newValues, "categories")
+    }
+
+    function addTag(old, newTag) {
+        var values = mainView.database.getDoc("tags")
+
+        if (old !== "") {
+            values["tags"][0] = values["tags"][1]
+            values["tags"][1] = values["tags"][2]
+        }
+
+        values["tags"][values["tags"].length] = newTag
+        mainView.database.putDoc(values, "tags")
     }
 }

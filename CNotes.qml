@@ -52,12 +52,12 @@ MainView {
     property bool createNote: false
     property string specificTag
 
-    property variant notes
-    property variant categoriesModel
-    property variant archivesModel
+//    property variant notes
+//    property variant categoriesModel
+//    property variant archivesModel
     property variant filterNotesModel
-    property variant archiveNotes
-    property variant allNotes
+//    property variant archiveNotes
+//    property variant allNotes
     property variant noteLinksModel
     property variant imagesModel
 
@@ -65,23 +65,23 @@ MainView {
     property variant database
     property variant backend
 
-    notes: ListModel {
-        onCountChanged: {
-            if (count > 0) {
-                notesListView.currentIndex = count - 1
-            }
-        }
-    }
+//    notes: ListModel {
+//        onCountChanged: {
+//            if (count > 0) {
+//                notesListView.currentIndex = count - 1
+//            }
+//        }
+//    }
 
-    categoriesModel: ListModel {}
+//    categoriesModel: ListModel {}
 
-    archivesModel: ListModel {
-        onCountChanged: {
-            if (count > 0) {
-                notesListView.currentIndex = count - 1
-            }
-        }
-    }
+//    archivesModel: ListModel {
+//        onCountChanged: {
+//            if (count > 0) {
+//                notesListView.currentIndex = count - 1
+//            }
+//        }
+//    }
 
     filterNotesModel: ListModel {}
 
@@ -195,6 +195,14 @@ MainView {
         defaults: {"categories": ["None", "Work", "Things to do"] }
     }
 
+    U1db.Document {
+        id: tagsDocument
+        database: database
+        docId: "tags"
+        create: true
+        defaults: {"tags": []}
+    }
+
     backend: U1Backend {
         id: backend
     }
@@ -267,13 +275,6 @@ MainView {
                             return
                         }
 
-//                        mainView.title = model[currentIndex].title
-//                        mainView.title = model.get(currentIndex).title
-//                        mainView.body = model.get(currentIndex).body
-//                        mainView.category = model.get(currentIndex).category
-//                        mainView.tag = model.get(currentIndex).tag
-//                        mainView.archive = model.get(currentIndex).archive
-
                         if (wideAspect) {
                             noteViewRow.visible = true
                         }
@@ -294,9 +295,9 @@ MainView {
             Popover {
                 id: tagsPopover
 
-                property variant usedTags: Storage.getUsedTags()
 
                 Component.onCompleted: {
+                    var usedTags= database.getDoc("tags").tags
                     var end = usedTags.length - 4
                     if (usedTags.length < 4) {
                         end = 0
@@ -391,11 +392,10 @@ MainView {
                                         // Check if tag already exists!
                                         if (!containTag(tagTextField.text.split(",")[i])) {
                                             if (tagsModel.count == 3) {
-                                                Storage.addTag(tagsModel.get(0), tagTextField.text.split(",")[i])
-                                                tagsModel.remove(0)
+                                                mainView.backend.addTag(tagsModel.get(0), tagTextField.text.split(",")[i])
                                             }
                                             else {
-                                                Storage.addTag("", tagTextField.text.split(",")[i])
+                                                mainView.backend.addTag("", tagTextField.text.split(",")[i])
                                             }
 
                                             tagsModel.append({tag: tagTextField.text.split(",")[i]})

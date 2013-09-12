@@ -95,7 +95,6 @@ Tabs {
 
                     ListItem.ValueSelector {
                         id: categoriesSelector
-                        property variant categories: Storage.fetchAllCategories()
 
                         width: parent.width
                         text: i18n.tr("Category")

@@ -34,18 +34,16 @@ Subtitled {
     subText: getHtmlText(_body)
 
     onItemRemoved: {
-        var id
 
         mainView.createNote = false
+
         if (_view === "main") {
-            id = _id
             mainView.backend.setNote(_id, _title, _body, _category, _tag, 'true', 'archive', _links, "archive")
-            mainView.backend.removeNote(id, "notes")
+            mainView.backend.removeNote(index, "notes")
         }
         else {
-            id = _id
             mainView.backend.setNote(_id, _title, _body, _category, _tag, 'false', 'main', _links, "notes")
-            mainView.backend.removeNote(id, "archive")
+            mainView.backend.removeNote(index, "archive")
         }
     }
 
