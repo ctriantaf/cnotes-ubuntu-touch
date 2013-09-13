@@ -20,7 +20,8 @@ Tab {
             }
 
             for (var i = 0; i < links.split(",").length; i++) {
-                if (links.split(",")[i] !== "Unknown") {
+                console.debug("link: " + links.split(",")[i])
+                if (links.split(",")[i] !== "Unknown" && links.split(",")[i] !== "") {
                     linksListView.model.append({'link': links.split(",")[i]})
                 }
             }

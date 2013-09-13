@@ -1,17 +1,14 @@
 {
+    "description": "description of CNotes",
     "framework": "ubuntu-sdk-13.10",
-    "maintainer": "Chris Triantafillis",
-    "name": "com.ubuntu.developer.clepto.CNotes",
-    "security": {
-        "profiles": {
-            "CNotes": {
-                "policy_groups": [
-                    "networking"
-                ],
-                "policy_version": 1
-            }
+    "hooks": {
+        "CNotes": {
+            "apparmor": "CNotes.json",
+            "desktop": "CNotes.desktop"
         }
     },
+    "maintainer": "Chris Triantafillis <christriant1995@gmail.com>",
+    "name": "com.ubuntu.developer.christriant.CNotes",
     "title": "CNotes",
     "version": "0.1"
 }

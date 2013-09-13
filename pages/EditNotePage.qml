@@ -2,7 +2,7 @@ import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
-import "../Storage.js" as Storage
+import "../components"
 
 Tabs {
     Tab {
@@ -99,12 +99,10 @@ Tabs {
 
                     ListItem.ValueSelector {
                         id: categoriesSelectorEdit
-                        property variant categories: Storage.fetchAllCategories()
 
                         width: parent.width
                         text: i18n.tr("Category")
                         expanded: false
-//                        values: categories
                         values: mainView.database.getDoc("categories").categories
                         selectedIndex: getCategoryIndex(mainView.category)
 
