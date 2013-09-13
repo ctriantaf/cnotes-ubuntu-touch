@@ -52,17 +52,9 @@ MainView {
     property bool createNote: false
     property string specificTag
 
-//    property variant notes
-//    property variant categoriesModel
-//    property variant archivesModel
     property variant filterNotesModel
-//    property variant archiveNotes
-//    property variant allNotes
     property variant noteLinksModel
     property variant imagesModel
-
-    property variant backend
-    property variant notesDatabase
 
     property string focusedEntry: ""
 
