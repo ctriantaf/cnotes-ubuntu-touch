@@ -61,27 +61,13 @@ MainView {
     property variant noteLinksModel
     property variant imagesModel
 
+    property variant backend
+    property variant notesDatabase
+
     property string focusedEntry: ""
+
     property variant database
     property variant backend
-
-//    notes: ListModel {
-//        onCountChanged: {
-//            if (count > 0) {
-//                notesListView.currentIndex = count - 1
-//            }
-//        }
-//    }
-
-//    categoriesModel: ListModel {}
-
-//    archivesModel: ListModel {
-//        onCountChanged: {
-//            if (count > 0) {
-//                notesListView.currentIndex = count - 1
-//            }
-//        }
-//    }
 
     filterNotesModel: ListModel {}
 
@@ -209,8 +195,6 @@ MainView {
 
     PageStack {
         id: rootPageStack
-
-        Component.onDestruction: dirParser.remove('./U1Database')
 
         Component.onCompleted: {
             setIdCount()
