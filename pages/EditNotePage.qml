@@ -2,8 +2,6 @@ import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
-import QtQuick.LocalStorage 2.0
-import "../Storage.js" as Storage
 import "../components"
 
 Tabs {
@@ -26,14 +24,38 @@ Tabs {
                         iconSource: Qt.resolvedUrl("../images/select.svg")
 
                         onTriggered: {
-                            Storage.setNote(mainView.id, inputTitleEdit.text, inputBodyEdit.text, categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex], tag, 'false', 'main')
-                            mainView.notes.get(mainView.position).title = inputTitleEdit.text
-                            mainView.notes.get(mainView.position).body = inputBodyEdit.text
-                            mainView.notes.get(mainView.position).category = categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex]
-                            mainView.notes.get(mainView.position).tag = tag
 
-                            mainView.tag = tag
-                            pageStack.push(Qt.resolvedUrl("../pages/MainPage.qml"))
+                            var doc
+                            var archive
+                            if (mainView.showArchive) {
+                                doc = 'archive'
+                                archive = 'true'
+                            }
+                            else {
+                                doc = 'notes'
+                                archive = 'false'
+                            }
+
+                            mainView.backend.replaceNote(mainView.id, doc, inputTitleEdit.text, inputBodyEdit.text,
+                                                         categoriesSelectorEdit.values[categoriesSelectorEdit.selectedIndex],
+                                                         tag, archive, 'main', mainView.getLinksForStorage())
+
+                            pageStack.push(mainConditionalPage)
+                        }
+                    }
+                }
+
+                back: ToolbarButton {
+                    action: Action {
+                        id: back
+                        objectName: "back"
+
+                        iconSource: Qt.resolvedUrl("../images/back.svg")
+                        text: i18n.tr("Back")
+
+                        onTriggered: {
+                            mainView.mode = "view"
+                            pageStack.pop()
                         }
                     }
                 }
@@ -77,18 +99,16 @@ Tabs {
 
                     ListItem.ValueSelector {
                         id: categoriesSelectorEdit
-                        property variant categories: Storage.fetchAllCategories()
 
                         width: parent.width
                         text: i18n.tr("Category")
                         expanded: false
-                        values: categories
+                        values: mainView.database.getDoc("categories").categories
                         selectedIndex: getCategoryIndex(mainView.category)
 
                         function getCategoryIndex(name) {
-                            var cat = Storage.fetchAllCategories()
-                            for (var i = 0; i < cat.length; i++) {
-                                if (cat[i] === name) {
+                            for (var i = 0; i < values.length; i++) {
+                                if (values[i] === name) {
                                     return i
                                 }
                             }

@@ -6,8 +6,8 @@ import "../components"
 Page {
     id: filterNoteViewPage
     title: {
-        if (mainView.filter == "tag")
-            return mainView.filter + ": " + mainView.tag
+        if (mainView.filter === "Tag")
+            return mainView.filter + ": " + mainView.specificTag
         return mainView.filter + ": " + mainView.category
     }
 
@@ -20,7 +20,6 @@ Page {
 
         model: filterNotesModel
         delegate: NoteItem {
-            _id: id
             _title: getHtmlText(title)
             _body: {
                 if (body.length > 80)
@@ -32,6 +31,7 @@ Page {
             _category: category
             _archive: archive
             _view: view
+            _links: links
         }
     }
 }

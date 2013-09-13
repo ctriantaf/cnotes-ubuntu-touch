@@ -1,11 +1,13 @@
 import QtQuick 2.0
+<<<<<<< HEAD
+=======
 import QtQuick.LocalStorage 2.0
 import U1db 1.0 as U1db
+>>>>>>> master
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
 import DirParser 1.0
-import "../Storage.js" as Storage
 import "../components"
 import "../pages"
 
@@ -16,23 +18,38 @@ ListView {
         margins: units.gu(2)
     }
 
+    property int pos
+
     delegate: NoteItem {
-        Component.onCompleted: {console.debug(modelData.title); console.debug("A")}
-        _id: id
-        _title: title
+
+        _id: idCount
+
+        _title: getCorrectDoc().notes[index].title
+
         _body: {
+            var body = getCorrectDoc().notes[index].body
             if (body.length > 80)
                 return body.substring(0, 80) + "..."
             return body
         }
 
-        _tag: tag
-        _category: category
-        _archive: archive
-        _view: view
+        _tag: getCorrectDoc().notes[index].tag
+        _category: getCorrectDoc().notes[index].category
+        _archive: getCorrectDoc().notes[index].archive
+        _view: getCorrectDoc().notes[index].view
 
         onPressAndHold: {
+            pos = index
             PopupUtils.open(noteRemoveComponent)
+        }
+
+        function getCorrectDoc() {
+            if (mainView.showArchive) {
+                return mainView.database.getDoc("archive")
+            }
+            else {
+                return mainView.database.getDoc("notes")
+            }
         }
     }
 
@@ -63,11 +80,17 @@ ListView {
                 }
 
                 onClicked: {
-                    Storage.removeNote(notesView.model.get(notesView.currentIndex).id)
-                    notesView.model.remove(notesView.currentIndex)
+                    if (mainView.showArchive) {
+                        mainView.backend.removeNote(pos, "archive")
+                        notesView.model = mainView.database.getDoc("archive").notes
+                    }
+                    else {
+                        mainView.backend.removeNote(pos, "notes")
+                        notesView.model = mainView.database.getDoc("notes").notes
+                    }
 
-                    if (dirParser.dirExists('./pictures/' + mainView.id + '/')) {
-                        dirParser.removeDir('./pictures/' + mainView.id + '/')
+                    if (dirParser.dirExists('./pictures/' + pos + '/')) {
+                        dirParser.removeDir('./pictures/' + pos + '/')
                     }
 
                     PopupUtils.close(noteRemovePopover)

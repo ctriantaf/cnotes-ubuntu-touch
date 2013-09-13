@@ -1,9 +1,7 @@
 import QtQuick 2.0
-import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1
 import Ubuntu.Components.Popups 0.1
-import "../Storage.js" as Storage
 import "../view"
 
 Subtitled {
@@ -36,18 +34,16 @@ Subtitled {
     subText: getHtmlText(_body)
 
     onItemRemoved: {
+
+        mainView.createNote = false
+
         if (_view === "main") {
-            _archive = 'true'
-            _view = "archive"
-            Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view, _links)
-            archivesModel.append({id:_id, title:_title, body:_body, category:_category, tag:_tag, archive:_archive, view:_view, links:_links})
-            notes.remove(notesListView.currentIndex)
+            mainView.backend.setNote(_id, _title, _body, _category, _tag, 'true', 'archive', _links, "archive")
+            mainView.backend.removeNote(index, "notes")
         }
         else {
-            _archive = 'false'
-            _view = "main"
-            Storage.setNote(_id, _title, _body, _category, _tag, _archive, _view, _links)
-            archivesModel.remove(notesListView.currentIndex)
+            mainView.backend.setNote(_id, _title, _body, _category, _tag, 'false', 'main', _links, "notes")
+            mainView.backend.removeNote(index, "archive")
         }
     }
 
@@ -60,10 +56,13 @@ Subtitled {
         mainView.tag = _tag
         mainView.position = model.index
         mainView.archive = _archive
+        mainView.links = _links
 
         if (mainView.wideAspect)
             return
 
         rootPageStack.push (Qt.resolvedUrl("../view/NoteView.qml"))
     }
+
+
 }
