@@ -61,7 +61,11 @@ Tab {
                     source: location
                 }
 
-                onPressAndHold: PopupUtils.open(imagePopoverComponent)
+                onPressAndHold: {
+                    if (mainView.mode !== "view") {
+                        PopupUtils.open(imagePopoverComponent)
+                    }
+                }
             }
         }
     }
@@ -95,17 +99,7 @@ Tab {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        if (imageTitle.text.length == 0) {
-                            imageTitle.focus = true
-                            return
-                        }
-
-                        if (!dirParser.dirExists(path)) {
-                            dirParser.createDirectory(path)
-                        }
-
-                        camera.imageCapture.captureToLocation(path + imageTitle.text)
-                        location = '../pictures/' + mainView.id + '/' + imageTitle.text
+                        captureImage()
                     }
                 }
             }
@@ -118,6 +112,11 @@ Tab {
             TextField {
                 id: imageTitle
                 placeholderText: i18n.tr("Give title")
+            }
+
+            Label {
+                id: messageLabel
+                visible: false
             }
 
             Row {
@@ -142,6 +141,22 @@ Tab {
                         PopupUtils.close(cameraDialog)
                     }
                 }
+            }
+
+            function captureImage() {
+                if (imageTitle.text.length == 0) {
+                    imageTitle.focus = true
+                    messageLabel.text = i18n.tr("You need to add a title")
+                    messageLabel.visible = true
+                    return
+                }
+
+                if (!dirParser.dirExists(path)) {
+                    dirParser.createDirectory(path)
+                }
+
+                camera.imageCapture.captureToLocation(path + imageTitle.text)
+                location = '../pictures/' + mainView.id + '/' + imageTitle.text
             }
         }
     }
@@ -171,7 +186,7 @@ Tab {
 
                 onClicked: {
                     var loc = imagesView.model.get(imagesView.currentIndex).location
-                    dirParser.remove(loc.substring(1))
+                    dirParser.remove(loc)
                     imagesView.model.remove(imagesView.currentIndex)
                     PopupUtils.close(imagePopover)
                 }

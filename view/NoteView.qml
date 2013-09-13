@@ -1,9 +1,7 @@
 import QtQuick 2.0
-import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Layouts 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
-import "../Storage.js" as Storage
 import "../components"
 import "../view"
 import "../pages"
@@ -25,16 +23,6 @@ Tabs {
                     for (var i = 0; i < mainView.tag.split(",").length; i++) {
                         noteTagsModel.append({tag: mainView.tag.split(",")[i]})
                     }
-
-//                    noteLinksModel.clear()
-//                    var links = Storage.getLinks(mainView.id)
-//                    for (var i = 0; i < links.split(",").length; i++) {
-//                        if (links[i] === 'undefined') {
-//                            break;
-//                        }
-
-//                        noteLinksModel.append({'link': links.split(",")[i]})
-//                    }
                 }
             }
 
@@ -55,6 +43,7 @@ Tabs {
                         text: i18n.tr("Edit")
 
                         onTriggered: {
+                            mainView.mode = "edit"
                             pageStack.push(Qt.resolvedUrl("../pages/EditNotePage.qml"))
                         }
                     }
@@ -84,24 +73,6 @@ Tabs {
                 }
                 spacing: units.gu(2)
             }
-
-//            function showNotesWithFilter (f) {
-//                filterNotesModel.clear()
-//                if (mainView.filter == "Tag") {
-//                    noteViewPage.allNotes = Storage.fetchAllNotesWithTag(f)
-//                }
-//                else {
-//                    noteViewPage.allNotes = Storage.fetchAllNotesWithCategory(f)
-//                }
-
-//                for (var i = 0; i < noteViewPage.allNotes.length; i++) {
-//                    var noteId = noteViewPage.allNotes[i]
-//                    filterNotesModel.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
-//                                         category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:Storage.getArchive(noteId),
-//                                         view:Storage.getView(noteId)})
-//                }
-//                pageStack.push(Qt.resolvedUrl("../view/FilterNoteView.qml"))
-//            }
         }
     }
 

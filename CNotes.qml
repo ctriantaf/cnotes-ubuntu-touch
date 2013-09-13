@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtQuick.LocalStorage 2.0
 import QtMultimedia 5.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
@@ -7,7 +6,6 @@ import Ubuntu.Components.Popups 0.1
 import Ubuntu.Layouts 0.1
 import U1db 1.0 as U1db
 import DirParser 1.0
-import "Storage.js" as Storage
 import "showdown.js" as Showdown
 import "components"
 import "view"
@@ -36,7 +34,7 @@ MainView {
 
     property bool wideAspect: width > units.gu(80)
 
-    property string idCount : "0"
+    property string idCount
     property string id
     property string title
     property string body
@@ -48,15 +46,18 @@ MainView {
     property string archive
     property string mode
     property string link
+    property string links
     property string imageLocation
-    property string showArchive: 'false'
+    property bool showArchive: false
+    property bool createNote: false
+    property string specificTag
 
-    property variant notes
-    property variant categoriesModel
-    property variant archivesModel
+//    property variant notes
+//    property variant categoriesModel
+//    property variant archivesModel
     property variant filterNotesModel
-    property variant archiveNotes
-    property variant allNotes
+//    property variant archiveNotes
+//    property variant allNotes
     property variant noteLinksModel
     property variant imagesModel
 
@@ -65,69 +66,8 @@ MainView {
 
     property string focusedEntry: ""
 
-    notesDatabase: U1db.Database {
-        id: notesDatabase
-        path: "notesU1db"
-    }
-
-    U1db.Document {
-        id: notesDocument
-        database: notesDatabase
-        docId: "notes"
-        create: true
-        defaults: {'notes': [{}] }
-    }
-
-    U1db.Document {
-        id: archiveDocument
-        database: notesDatabase
-        docId: "archive"
-        create: true
-        defaults: {'archive': [{}] }
-    }
-
-    U1db.Document {
-        id: categoriesDocument
-        database: notesDatabase
-        docId: "categories"
-        create: true
-        defaults: {"categories": [{}] }
-    }
-
-    U1db.Index {
-        database: notesDatabase
-        id: allNotesIndex
-        expression: ["notes"]
-    }
-
-    U1db.Query {
-        id: allNotesQuery
-        index: allNotesIndex
-        query: []
-    }
-
-    backend: U1Backend {
-        id: backend
-        db: notesDatabase
-    }
-
-    notes: ListModel {
-        onCountChanged: {
-            if (count > 0) {
-                notesListView.currentIndex = count - 1
-            }
-        }
-    }
-
-    categoriesModel: ListModel {}
-
-    archivesModel: ListModel {
-        onCountChanged: {
-            if (count > 0) {
-                notesListView.currentIndex = count - 1
-            }
-        }
-    }
+    property variant database
+    property variant backend
 
     filterNotesModel: ListModel {}
 
@@ -153,37 +93,20 @@ MainView {
         }
     }
 
-    function loadNotes() {
-        allNotes = Storage.fetchNotes('false')
+    function setIdCount() {
         idCount = 0
-        for (var i = 0; i < allNotes.length; i++) {
-            var noteId = allNotes[i]
-            mainView.notes.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
-                                     category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'false', view:"main"})
 
-            if (noteId > idCount)
-                idCount = noteId
+        var archive = database.getDoc("archive")
+
+        var all = database.getDoc("notes")
+        for (var i = 0; i < archive["notes"].length; i++) {
+            all["notes"][all["notes"].length] = archive["notes"][i]
         }
 
-    }
-
-//    function loadNotesU1db() {
-
-//    }
-
-    function loadArchiveNotes() {
-        archiveNotes = Storage.fetchNotes('true')
-        for (var i = 0; i < archiveNotes.length; i++) {
-            var noteId = archiveNotes[i]
-            archivesModel.append({id:noteId, title:Storage.getTitle(noteId), body:Storage.getBody(noteId),
-                                     category:Storage.getCategory(noteId), tag:Storage.getTags(noteId), archive:'true', view:"archive"})
-        }
-    }
-
-    function loadCategories() {
-        var cat = Storage.fetchAllCategories()
-        for (var i = 0; i < cat.length; i++) {
-            categoriesModel.append({categoryName: cat[i]})
+        for (var i = 0; i < all["notes"].length; i++) {
+            if (all["notes"][i].id > idCount) {
+                idCount = all["notes"][i].id
+            }
         }
     }
 
@@ -229,37 +152,52 @@ MainView {
         archivesModel.clear()
     }
 
+    database: U1db.Database {
+        id: database
+        path: "U1Database"
+    }
+
+    U1db.Document {
+        id: notesDocument
+        database: database
+        docId: "notes"
+        create: true
+        defaults: {"notes": []}
+    }
+
+    U1db.Document {
+        id: archiveDocument
+        database: database
+        docId: "archive"
+        create: true
+        defaults: {"notes": []}
+    }
+
+    U1db.Document {
+        id: categoriesDocument
+        database: database
+        docId: "categories"
+        create: true
+        defaults: {"categories": ["None", "Work", "Things to do"] }
+    }
+
+    U1db.Document {
+        id: tagsDocument
+        database: database
+        docId: "tags"
+        create: true
+        defaults: {"tags": []}
+    }
+
+    backend: U1Backend {
+        id: backend
+    }
+
     PageStack {
         id: rootPageStack
 
         Component.onCompleted: {
-
-//            var id = "0"
-//            console.debug(backend.getTitle(id))
-//            console.debug(notesDatabase.getDoc("notes")[0].title)
-
-//            console.debug(notesDocument.contents.notes.length)
-//            console.debug(notesDatabase.getDoc("notes").notes.length)
-
-            Storage.deleteDatabase()
-            dirParser.removeDir('./categories')
-            Storage.initialize()
-//            loadNotesU1db()
-//            loadNotes()
-//            loadArchiveNotes()
-
-            if (dirParser.dirExists('./categories')) {
-                loadCategories()
-            }
-            else {
-                Storage.addCategory("None")
-                Storage.addCategory("Things to do")
-                Storage.addCategory("Work")
-                categoriesModel.append({categoryName: "None"})
-                categoriesModel.append({categoryName: "Things to do"})
-                categoriesModel.append({categoryName: "Work"})
-                dirParser.createDirectory('./categories')
-            }
+            setIdCount()
 
             rootPageStack.push(mainConditionalPage)
         }
@@ -316,21 +254,10 @@ MainView {
                     model: notesDocument.contents.notes
 
                     onCurrentIndexChanged: {
-
-//                        console.debug(notesDatabase.getDoc("notes").notes.length)
-//                        console.debug("Length: " + notesListView.model.length)
-//                        if (notesListView.model.length === 0 && wideAspect) {
-//                            noteViewRow.visible = false
-//                            return
-//                        }
-
-                        console.debug(notesListView.model.length)
-
-                        mainView.title = model.get(currentIndex).title
-                        mainView.body = model.get(currentIndex).body
-                        mainView.category = model.get(currentIndex).category
-                        mainView.tag = model.get(currentIndex).tag
-                        mainView.archive = model.get(currentIndex).archive
+                        if (notesDocument.contents.notes.length === 0 && wideAspect) {
+                            noteViewRow.visible = false
+                            return
+                        }
 
                         if (wideAspect) {
                             noteViewRow.visible = true
@@ -352,9 +279,9 @@ MainView {
             Popover {
                 id: tagsPopover
 
-                property variant usedTags: Storage.getUsedTags()
 
                 Component.onCompleted: {
+                    var usedTags= database.getDoc("tags").tags
                     var end = usedTags.length - 4
                     if (usedTags.length < 4) {
                         end = 0
@@ -449,11 +376,10 @@ MainView {
                                         // Check if tag already exists!
                                         if (!containTag(tagTextField.text.split(",")[i])) {
                                             if (tagsModel.count == 3) {
-                                                Storage.addTag(tagsModel.get(0), tagTextField.text.split(",")[i])
-                                                tagsModel.remove(0)
+                                                mainView.backend.addTag(tagsModel.get(0), tagTextField.text.split(",")[i])
                                             }
                                             else {
-                                                Storage.addTag("", tagTextField.text.split(",")[i])
+                                                mainView.backend.addTag("", tagTextField.text.split(",")[i])
                                             }
 
                                             tagsModel.append({tag: tagTextField.text.split(",")[i]})

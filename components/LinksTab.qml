@@ -1,9 +1,7 @@
 import QtQuick 2.0
-import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.Popups 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
-import "../Storage.js" as Storage
 
 Tab {
     title: i18n.tr("Links")
@@ -14,13 +12,18 @@ Tab {
 
         function loadLinks() {
             linksListView.model.clear()
-            var links = Storage.getLinks(mainView.id)
-            if (links === 'undefined') {
-                return
+            var links
+            try {
+                links = notesListView.model[mainView.id].links
+            } catch (error) {
+                links = mainView.links
             }
 
             for (var i = 0; i < links.split(",").length; i++) {
-                linksListView.model.append({'link': links.split(",")[i]})
+                console.debug("link: " + links.split(",")[i])
+                if (links.split(",")[i] !== "Unknown" && links.split(",")[i] !== "") {
+                    linksListView.model.append({'link': links.split(",")[i]})
+                }
             }
         }
 
@@ -63,7 +66,11 @@ Tab {
                     Qt.openUrlExternally(link)
                 }
 
-                onPressAndHold: PopupUtils.open(linkPopoverComponent)
+                onPressAndHold: {
+                    if (mainView.mode !== "view") {
+                        PopupUtils.open(linkPopoverComponent)
+                    }
+                }
             }
         }
     }

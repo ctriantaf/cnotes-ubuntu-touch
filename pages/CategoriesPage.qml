@@ -1,9 +1,7 @@
 import QtQuick 2.0
-import QtQuick.LocalStorage 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
-import "../Storage.js" as Storage
 import "../images"
 
 Page {
@@ -39,13 +37,15 @@ Page {
             margins: units.gu(2)
         }
 
-        model: categoriesModel
+//        model: categoriesModel
+        model: mainView.database.getDoc("categories").categories
         delegate: ListItem.Standard {
-            text: categoryName
+            text: mainView.database.getDoc("categories").categories[index]
 
             onClicked: {
-                if (categoryName !== i18n.tr("None")) {
-                    categoriesPage.name = categoryName
+                if (index !== 0) {
+//                    categoriesPage.name = categoryName
+                    categoriesPage.name = mainView.database.getDoc("categories").categories[index]
                     categoriesPage.pos = index
                     categoriesPage.mode = "edit"
                     PopupUtils.open(editCategoriesComponent)
@@ -63,7 +63,7 @@ Page {
             id: editCategoriesDialog
             title: {
                 if (categoriesPage.mode == "edit")
-                    return i18n.tr("Edit ") + name
+                    return i18n.tr("Edit ") + categoriesPage.name
                 return i18n.tr("Add category")
             }
 
@@ -79,16 +79,15 @@ Page {
                         PopupUtils.close(editCategoriesDialog)
                         return
                     }
-                    if (categoriesModel.count != 0) {
+
+                    if (mainView.database.getDoc("categories").categories.length !== 1) {
                         if (categoriesPage.mode == "add") {
-                            categoriesModel.append({categoryName: editCategoryName.text})
-                            Storage.addCategory(editCategoryName.text)
+                            mainView.backend.addCategory(editCategoryName.text)
                         }
                         else {
-                            categoriesModel.remove(categoriesPage.pos)
-                            categoriesModel.insert(categoriesPage.pos, {categoryName: editCategoryName.text})
-                            Storage.replaceCategory(name, editCategoryName.text)
+                            mainView.backend.replaceCategory(categoriesPage.pos, editCategoryName.text)
                         }
+                        categoriesView.model = mainView.database.getDoc("categories").categories
                     }
 
                     PopupUtils.close(editCategoriesDialog)
@@ -99,8 +98,10 @@ Page {
                 text: i18n.tr("Delete")
                 onClicked: {
                     if (categoriesPage.mode == "edit") {
-                        categoriesModel.remove(categoriesPage.pos)
-                        Storage.removeCategory(name)
+                        mainView.backend.removeCategory(categoriesPage.pos)
+                        categoriesView.model = mainView.database.getDoc("categories").categories
+//                        categoriesModel.remove(categoriesPage.pos)
+//                        Storage.removeCategory(name)
                     }
                     PopupUtils.close(editCategoriesDialog)
                 }

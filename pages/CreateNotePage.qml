@@ -2,8 +2,6 @@ import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
-import QtQuick.LocalStorage 2.0
-import "../Storage.js" as Storage
 import "../components"
 
 Tabs {
@@ -39,16 +37,11 @@ Tabs {
                                 return
                             }
 
-//                            Storage.setNote(idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
-//                                            tag, 'false', 'main', mainView.getLinksForStorage())
-                            var res = mainView.backend.setNote(idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
-                                                     tag, 'false', 'main', mainView.getLinksForStorage())
-                            console.debug("Note created: " + res)
+                            mainView.createNote = true
+                            mainView.backend.setNote(mainView.idCount, inputTitle.text, inputBody.text, categoriesSelector.values[categoriesSelector.selectedIndex],
+                                                     tag, 'false', 'main', mainView.getLinksForStorage(), "notes")
 
-                            mainView.notes.append({title: inputTitle.text, body: inputBody.text, id: idCount,
-                                             category: categoriesSelector.values[categoriesSelector.selectedIndex], tag:tag, archive: 'false', view:"main"})
-                            idCount++
-
+                            mainView.idCount++
                             inputTitle.text = ""
                             inputBody.text = ""
 
@@ -102,12 +95,11 @@ Tabs {
 
                     ListItem.ValueSelector {
                         id: categoriesSelector
-                        property variant categories: Storage.fetchAllCategories()
 
                         width: parent.width
                         text: i18n.tr("Category")
                         expanded: false
-                        values: categories
+                        values: mainView.database.getDoc("categories").categories
                     }
                 }
             }
