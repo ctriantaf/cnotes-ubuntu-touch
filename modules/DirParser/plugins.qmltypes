@@ -1,0 +1,40 @@
+import QtQuick.tooling 1.1
+
+// This file describes the plugin-supplied types contained in the library.
+// It is used for QML tooling purposes only.
+//
+// This file was auto-generated with the command '/usr/lib/i386-linux-gnu/qt5/bin/qmlplugindump DirParser 0.1 /home/mario/showdown/cnotes-ubuntu-touch/modules'.
+
+Module {
+    Component {
+        name: "DirParser"
+        defaultProperty: "data"
+        prototype: "QQuickItem"
+        exports: ["DirParser 0.1"]
+        Method {
+            name: "createDirectory"
+            type: "bool"
+            Parameter { name: "name"; type: "string" }
+        }
+        Method {
+            name: "fetchAllFiles"
+            type: "QStringList"
+            Parameter { name: "name"; type: "string" }
+        }
+        Method {
+            name: "dirExists"
+            type: "bool"
+            Parameter { name: "name"; type: "string" }
+        }
+        Method {
+            name: "removeDir"
+            type: "bool"
+            Parameter { name: "dirName"; type: "string" }
+        }
+        Method {
+            name: "remove"
+            type: "bool"
+            Parameter { name: "name"; type: "string" }
+        }
+    }
+}

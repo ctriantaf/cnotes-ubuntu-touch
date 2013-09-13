@@ -6,7 +6,7 @@ import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
 import Ubuntu.Layouts 0.1
 import U1db 1.0 as U1db
-import DirParser 1.0
+import DirParser 0.1
 import "Storage.js" as Storage
 import "showdown.js" as Showdown
 import "components"
