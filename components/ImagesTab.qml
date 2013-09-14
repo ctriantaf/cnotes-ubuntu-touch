@@ -8,11 +8,13 @@ import DirParser 1.0
 Tab {
     title: i18n.tr("Images")
     page: Page {
+        id: page
+
+        property string location: dirParser.getPicturesFolder() + "/.cnotes/"
 
         Component.onCompleted: {
             imagesView.model.clear()
-            var loc = "./pictures/" + mainView.id + '/'
-            var imgs = dirParser.fetchAllFiles(loc)
+            var imgs = dirParser.fetchAllFiles(location + mainView.id)
             for (var i = 0; i < imgs.length; i++) {
                 imagesView.model.append({'location': imgs[i]})
             }
@@ -81,8 +83,7 @@ Tab {
             id: cameraDialog
             title: i18n.tr("Take a photo")
 
-            property string path: './pictures/' + mainView.id + '/'
-            property string location
+            property string path: page.location + mainView.id + "/"
 
             Camera {
                 id: camera
@@ -150,7 +151,7 @@ Tab {
                         add = true
                         }
                         else {
-                            mainView.imagesModel.append({'location': location, 'imgTitle': imageTitle.text})
+                            mainView.imagesModel.append({'location': path + imageTitle.text, 'imgTitle': imageTitle.text})
                             PopupUtils.close(cameraDialog)
                         }
                     }
@@ -163,7 +164,7 @@ Tab {
                 }
 
                 camera.imageCapture.captureToLocation(path + imageTitle.text)
-                location = '../pictures/' + mainView.id + '/' + imageTitle.text
+//                location = '../pictures/' + mainView.id + '/' + imageTitle.text
             }
         }
     }

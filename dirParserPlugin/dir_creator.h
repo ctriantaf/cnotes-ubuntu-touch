@@ -18,6 +18,7 @@ public:
     Q_INVOKABLE bool remove(const QString &name);
     Q_INVOKABLE short getSubdirsNum(const QString &name);
     Q_INVOKABLE short getAllSubdirsNum(const QString &name);
+    Q_INVOKABLE QString getPicturesFolder();
 };
 
 #endif

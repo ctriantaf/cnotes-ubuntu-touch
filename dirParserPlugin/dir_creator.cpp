@@ -1,6 +1,7 @@
 #include "dir_creator.h"
 #include <QDir>
 #include <QDirIterator>
+#include <QStandardPaths>
 
 DirParser::DirParser(QQuickItem *parent)
     : QQuickItem(parent)
@@ -57,4 +58,8 @@ short DirParser::getAllSubdirsNum(const QString &name){
         counter++;
     }
     return counter;
+}
+
+QString DirParser::getPicturesFolder() {
+    return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0);
 }
