@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
-import QtQuick.Window 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.Popups 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
@@ -87,28 +86,10 @@ Tab {
 
             Camera {
                 id: camera
+
                 imageCapture {
-                    onImageCaptured: photoPreview.source = preview
+                    onImageCaptured: imagePreview.source = preview
                 }
-            }
-
-            VideoOutput {
-                source: camera
-                focus: visible
-                height: units.gu(20)
-                orientation: Screen.primaryOrientation === Qt.LandscapeOrientation ? 0 : -90
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        captureImage()
-                    }
-                }
-            }
-
-            Image {
-                id: photoPreview
-                height: units.gu(20)
             }
 
             TextField {
@@ -116,10 +97,20 @@ Tab {
                 placeholderText: i18n.tr("Give title")
             }
 
+            VideoOutput {
+                source: camera
+                focus: visible
+                height: units.gu(20)
+            }
+
+            Image {
+                id: imagePreview
+                height: units.gu(20)
+            }
+
             Label {
                 id: messageLabel
                 visible: false
-                fontSize: "small"
             }
 
             Row {
@@ -135,25 +126,38 @@ Tab {
                 }
 
                 Button {
-                    text: i18n.tr("Add")
+                    text: {
+                        if (add) {
+                            return i18n.tr("Add")
+                        }
+                        return i18n.tr("Capture")
+                    }
+
                     width: parent.width / 2
                     color: "#A55263"
+                    property bool add : false
 
                     onClicked: {
-                        mainView.imagesModel.append({'location': location, 'imgTitle': imageTitle.text})
-                        PopupUtils.close(cameraDialog)
+                        if (!add) {
+                        if (imageTitle.text.length == 0) {
+                            imageTitle.focus = true
+                            messageLabel.text = i18n.tr("You need to add a title")
+                            messageLabel.visible = true
+                            return
+                        }
+
+                        captureImage()
+                        add = true
+                        }
+                        else {
+                            mainView.imagesModel.append({'location': location, 'imgTitle': imageTitle.text})
+                            PopupUtils.close(cameraDialog)
+                        }
                     }
                 }
             }
 
             function captureImage() {
-                if (imageTitle.text.length == 0) {
-                    imageTitle.focus = true
-                    messageLabel.text = i18n.tr("You need to add a title")
-                    messageLabel.visible = true
-                    return
-                }
-
                 if (!dirParser.dirExists(path)) {
                     dirParser.createDirectory(path)
                 }
