@@ -146,7 +146,7 @@ MainView {
 
     database: U1db.Database {
         id: database
-        path: "U1Database"
+        path: "CNotesDatabase.db"
     }
 
     U1db.Document {
