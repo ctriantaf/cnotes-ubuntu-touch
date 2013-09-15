@@ -18,7 +18,7 @@ ListView {
 
     delegate: NoteItem {
 
-        _id: idCount
+        _id: getCorrectDoc().notes[index].id
 
         _title: getCorrectDoc().notes[index].title
 
@@ -76,6 +76,8 @@ ListView {
                 }
 
                 onClicked: {
+                    var id = notesView.model[pos]["id"]
+
                     if (mainView.showArchive) {
                         mainView.backend.removeNote(pos, "archive")
                         notesView.model = mainView.database.getDoc("archive").notes
@@ -85,11 +87,11 @@ ListView {
                         notesView.model = mainView.database.getDoc("notes").notes
                     }
 
-                    if (dirParser.dirExists('./pictures/' + pos + '/')) {
-                        dirParser.removeDir('./pictures/' + pos + '/')
-                    }
-
                     PopupUtils.close(noteRemovePopover)
+
+                    if (dirParser.getPicturesWritableFolder() + "/com.ubuntu.developer.christriant.cnotes/" + id + "/") {
+                        dirParser.removeDir(dirParser.getPicturesWritableFolder() + "/com.ubuntu.developer.christriant.cnotes/" + id + "/")
+                    }
                 }
             }
         }

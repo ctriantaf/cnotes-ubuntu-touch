@@ -17,7 +17,11 @@ ToolbarItems {
                 iconSource: Qt.resolvedUrl("../images/add.svg")
                 text: i18n.tr("Add")
 
-                onTriggered: rootPageStack.push(Qt.resolvedUrl("../pages/CreateNotePage.qml"))
+                onTriggered: {
+                    mainView.mode = "add"
+                    mainView.id = mainView.idCount
+                    rootPageStack.push(Qt.resolvedUrl("../pages/CreateNotePage.qml"))
+                }
             }
         }
 

@@ -63,3 +63,7 @@ short DirParser::getAllSubdirsNum(const QString &name){
 QString DirParser::getPicturesFolder() {
     return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0);
 }
+
+QString DirParser::getPicturesWritableFolder() {
+    return QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+}

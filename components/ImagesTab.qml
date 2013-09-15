@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
+import QtQuick.Window 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.Popups 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
@@ -10,13 +11,16 @@ Tab {
     page: Page {
         id: page
 
-        property string location: dirParser.getPicturesFolder() + "/.cnotes/"
+        property string location: dirParser.getPicturesWritableFolder() + "/com.ubuntu.developer.christriant.cnotes/"
 
-        Component.onCompleted: {
+        onVisibleChanged: {
             imagesView.model.clear()
-            var imgs = dirParser.fetchAllFiles(location + mainView.id)
-            for (var i = 0; i < imgs.length; i++) {
-                imagesView.model.append({'location': imgs[i]})
+
+            if (mainView.mode !== "add") {
+                var imgs = dirParser.fetchAllFiles(location + mainView.id)
+                for (var i = 0; i < imgs.length; i++) {
+                    imagesView.model.append({'location': imgs[i]})
+                }
             }
         }
 
@@ -81,12 +85,19 @@ Tab {
 
         Dialog {
             id: cameraDialog
-            title: i18n.tr("Take a photo")
+//            title: i18n.tr("Take a photo")
 
             property string path: page.location + mainView.id + "/"
+            property int buttonHeight
 
             Camera {
                 id: camera
+
+//                cameraState: Camera.UnloadedStatus
+//                flash.mode: Camera.FlashAuto
+//                captureMode: Camera.CaptureStillImage
+//                focus.focusMode: Camera.FocusAuto
+//                exposure.exposureMode: Camera.ExposureAuto
 
                 imageCapture {
                     onImageCaptured: imagePreview.source = preview
@@ -102,11 +113,14 @@ Tab {
                 source: camera
                 focus: visible
                 height: units.gu(20)
+//                height: (cameraDialog.height - messageLabel.height - buttonHeight) / 2
+                orientation: Screen.primaryOrientation === Qt.LandscapeOrientation ? 0 : -90
             }
 
             Image {
                 id: imagePreview
                 height: units.gu(20)
+//                height: (cameraDialog.height - messageLabel.height - buttonHeight) / 2
             }
 
             Label {
@@ -115,13 +129,18 @@ Tab {
             }
 
             Row {
+                id: row
                 spacing: units.gu(1)
                 Button {
                     text: i18n.tr("Close")
                     width: parent.width / 2
+                    height: units.gu(5)
                     color: "#A55263"
                     onClicked: {
-                        dirParser.remove(location.substring(1))
+                        if (page.add) {
+                            dirParser.remove(path + imageTitle.text)
+                        }
+
                         PopupUtils.close(cameraDialog)
                     }
                 }
@@ -135,6 +154,7 @@ Tab {
                     }
 
                     width: parent.width / 2
+                    height: units.gu(5)
                     color: "#A55263"
                     property bool add : false
 

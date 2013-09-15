@@ -86,7 +86,7 @@ MainView {
     }
 
     function setIdCount() {
-        idCount = 0
+        mainView.idCount = 0
 
         var archive = database.getDoc("archive")
 
@@ -95,11 +95,7 @@ MainView {
             all["notes"][all["notes"].length] = archive["notes"][i]
         }
 
-        for (var i = 0; i < all["notes"].length; i++) {
-            if (all["notes"][i].id > idCount) {
-                idCount = all["notes"][i].id
-            }
-        }
+        mainView.idCount = all["notes"].length
     }
 
     function containTag(t) {
@@ -190,7 +186,6 @@ MainView {
 
         Component.onCompleted: {
             setIdCount()
-
             rootPageStack.push(mainConditionalPage)
         }
 

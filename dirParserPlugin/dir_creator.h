@@ -19,6 +19,7 @@ public:
     Q_INVOKABLE short getSubdirsNum(const QString &name);
     Q_INVOKABLE short getAllSubdirsNum(const QString &name);
     Q_INVOKABLE QString getPicturesFolder();
+    Q_INVOKABLE QString getPicturesWritableFolder();
 };
 
 #endif
